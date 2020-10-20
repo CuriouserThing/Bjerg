@@ -1,6 +1,6 @@
 namespace Bjerg.DataDragon
 {
-    internal class DdTerm
+    public class DdTerm
     {
         public string? Name { get; set; }
 

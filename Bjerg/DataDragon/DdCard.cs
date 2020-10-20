@@ -1,9 +1,7 @@
 namespace Bjerg.DataDragon
 {
-    internal class DdCard
+    public class DdCard
     {
-        #region Properties
-
         public object[]? AssociatedCards { get; set; }
 
         public string[]? AssociatedCardRefs { get; set; }
@@ -59,8 +57,6 @@ namespace Bjerg.DataDragon
         public bool Collectible { get; set; }
 
         public string? Set { get; set; }
-
-        #endregion
 
         public override string ToString()
         {

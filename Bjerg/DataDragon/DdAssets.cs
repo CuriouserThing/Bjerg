@@ -1,6 +1,6 @@
 namespace Bjerg.DataDragon
 {
-    internal class DdAssets
+    public class DdAssets
     {
         public string? GameAbsolutePath { get; set; }
 

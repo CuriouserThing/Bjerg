@@ -1,6 +1,6 @@
 namespace Bjerg.DataDragon
 {
-    internal class DdGlobals
+    public class DdGlobals
     {
         public DdVocabTerm[]? VocabTerms { get; set; }
 
