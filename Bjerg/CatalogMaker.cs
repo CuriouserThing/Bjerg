@@ -75,7 +75,7 @@ namespace Bjerg
 
         private void AddPropToCard<T>(BasicCard card, string? propRef, string propName, Dictionary<string, T> valueDic, Action<BasicCard, T> valueSetter) where T : class
         {
-            if (propRef != null)
+            if (!string.IsNullOrWhiteSpace(propRef))
             {
                 if (valueDic.TryGetValue(propRef, out T? value))
                 {
@@ -93,7 +93,7 @@ namespace Bjerg
             if (propRefs != null)
             {
                 var values = new List<T>();
-                foreach (string propRef in propRefs)
+                foreach (string propRef in propRefs.Where(r => !string.IsNullOrWhiteSpace(r)))
                 {
                     if (valueDic.TryGetValue(propRef, out T? value))
                     {
