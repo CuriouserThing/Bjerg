@@ -20,7 +20,7 @@ namespace Bjerg
 
         public override string ToString()
         {
-            var sb = new StringBuilder(Numbers[0]);
+            StringBuilder sb = new StringBuilder().Append(Numbers[0]);
             for (int i = 1; i < Numbers.Count; i++)
             {
                 _ = sb.Append($".{Numbers[i]}");
