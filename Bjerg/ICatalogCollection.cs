@@ -1,8 +1,9 @@
+using System;
 using System.Threading.Tasks;
 
 namespace Bjerg
 {
-    public interface ICatalogCollection
+    public interface ICatalogCollection : IDisposable
     {
         /// <summary>
         /// Fetch or create a catalog in a thread-safe manner.

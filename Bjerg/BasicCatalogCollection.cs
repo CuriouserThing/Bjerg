@@ -150,5 +150,33 @@ namespace Bjerg
                 return cat;
             }
         }
+
+        #region Disposable
+
+        private bool _disposedValue;
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposedValue)
+            {
+                if (disposing)
+                {
+                }
+                _disposedValue = true;
+            }
+        }
+
+        ~BasicCatalogCollection()
+        {
+            Dispose(disposing: false);
+        }
+
+        public void Dispose()
+        {
+            Dispose(disposing: true);
+            System.GC.SuppressFinalize(this);
+        }
+
+        #endregion
     }
 }
