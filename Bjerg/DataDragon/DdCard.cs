@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+
 namespace Bjerg.DataDragon
 {
     public class DdCard
@@ -61,6 +64,33 @@ namespace Bjerg.DataDragon
         public override string ToString()
         {
             return $"{Name} ({CardCode})";
+        }
+
+        /// <summary>
+        /// Get all distinct, non-null, non-whitespace subtypes between <see cref="DdCard.Subtype"/> and <see cref="DdCard.Subtypes"/>, as Riot's usage of these fields is inconsistent.
+        /// </summary>
+        public IReadOnlyList<string> GetDistinctSubtypes()
+        {
+            if (string.IsNullOrWhiteSpace(Subtype))
+            {
+                return Subtypes ?? Array.Empty<string>();
+            }
+            else if (Subtypes is null)
+            {
+                return new[] { Subtype };
+            }
+            else
+            {
+                var allSubtypes = new List<string>(capacity: 1 + Subtypes.Length) { Subtype };
+                for (int i = 0; i < Subtypes.Length; i++)
+                {
+                    if (!string.IsNullOrWhiteSpace(Subtypes[0]) && Subtypes[0] != Subtype)
+                    {
+                        allSubtypes.Add(Subtypes[0]);
+                    }
+                }
+                return allSubtypes;
+            }
         }
     }
 }

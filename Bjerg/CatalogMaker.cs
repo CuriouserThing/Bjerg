@@ -128,7 +128,7 @@ namespace Bjerg
 
             IEnumerable<string> supertypeRefs = DdCards
                 .Select(c => c.Supertype)
-                .Where(s => s != null)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s!)
                 .Distinct();
             var supertypes = new Dictionary<string, LorSupertype>();
@@ -140,7 +140,7 @@ namespace Bjerg
 
             IEnumerable<string> typeRefs = DdCards
                 .Select(c => c.Type)
-                .Where(s => s != null)
+                .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s!)
                 .Distinct();
             var types = new Dictionary<string, LorType>();
@@ -151,9 +151,7 @@ namespace Bjerg
             }
 
             IEnumerable<string> subtypeRefs = DdCards
-                .SelectMany(c => c.Subtypes)
-                .Where(s => s != null)
-                .Select(s => s!)
+                .SelectMany(c => c.GetDistinctSubtypes())
                 .Distinct();
             var subtypes = new Dictionary<string, LorSubtype>();
             foreach (string subtypeRef in subtypeRefs)
