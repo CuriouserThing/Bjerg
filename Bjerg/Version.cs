@@ -28,6 +28,91 @@ namespace Bjerg
             return sb.ToString();
         }
 
+        private int GetTrimmedLength()
+        {
+            int n = 0;
+            for (int i = 0; i < Numbers.Count; i++)
+            {
+                if (Numbers[i] != 0)
+                {
+                    n = i + 1;
+                }
+            }
+            return n;
+        }
+
+        /// <summary>
+        /// Determine whether two versions are equal after trimming trailing zeros from both.
+        /// </summary>
+        public bool IsEquivalentTo(Version other)
+        {
+            int ta = this.GetTrimmedLength();
+            int tb = other.GetTrimmedLength();
+
+            if (ta != tb)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < ta; i++)
+            {
+                if (this.Numbers[i] != other.Numbers[i])
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        /// <summary>
+        /// Determine whether this version is earlier than another version.
+        /// </summary>
+        public bool IsEarlierThan(Version other)
+        {
+            int ta = this.GetTrimmedLength();
+            int tb = other.GetTrimmedLength();
+            int tm = Math.Min(ta, tb);
+
+            for (int i = 0; i < tm; i++)
+            {
+                if (this.Numbers[i] < other.Numbers[i])
+                {
+                    return true;
+                }
+                if (this.Numbers[i] > other.Numbers[i])
+                {
+                    return false;
+                }
+            }
+
+            return tb > ta; // if the other version has additional non-zero numbers it must be later
+        }
+
+        /// <summary>
+        /// Determine whether this version is later than another version.
+        /// </summary>
+        public bool IsLaterThan(Version other)
+        {
+            int ta = this.GetTrimmedLength();
+            int tb = other.GetTrimmedLength();
+            int tm = Math.Min(ta, tb);
+
+            for (int i = 0; i < tm; i++)
+            {
+                if (this.Numbers[i] > other.Numbers[i])
+                {
+                    return true;
+                }
+                if (this.Numbers[i] < other.Numbers[i])
+                {
+                    return false;
+                }
+            }
+
+            return ta > tb; // if this version has additional non-zero numbers it must be later
+        }
+
         #region Equality
 
         public override int GetHashCode()

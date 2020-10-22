@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace Bjerg
 {
-    public class CatalogMaker
+    internal class CatalogMaker
     {
         private Locale Locale { get; }
 
