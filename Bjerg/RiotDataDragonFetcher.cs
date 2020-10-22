@@ -13,14 +13,14 @@ namespace Bjerg
     {
         private HttpClient Client { get; }
 
-        private ILogger Logger { get; }
+        private ILogger<RiotDataDragonFetcher> Logger { get; }
 
         private JsonSerializerOptions JsonOptions { get; } = new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
         };
 
-        public RiotDataDragonFetcher(ILogger logger)
+        public RiotDataDragonFetcher(ILogger<RiotDataDragonFetcher> logger)
         {
             Client = new HttpClient();
             Logger = logger;

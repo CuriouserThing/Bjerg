@@ -12,11 +12,11 @@ namespace Bjerg
 
         private IDataDragonFetcher DdFetcher { get; }
 
-        private ILogger Logger { get; }
+      private ILogger<BasicCatalogCollection> Logger { get; }
 
         private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new Dictionary<(Locale, Version), Catalog>();
 
-        public BasicCatalogCollection(IDataDragonFetcher ddFetcher, ILogger logger)
+        public BasicCatalogCollection(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogCollection> logger)
         {
             DdFetcher = ddFetcher;
             Logger = logger;
