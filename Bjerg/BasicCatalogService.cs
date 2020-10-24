@@ -6,17 +6,17 @@ using System.Threading.Tasks;
 
 namespace Bjerg
 {
-    public class BasicCatalogCollection : ICatalogCollection
+    public class BasicCatalogService : ICatalogService
     {
         private readonly object _syncRoot = new object();
 
         private IDataDragonFetcher DdFetcher { get; }
 
-        private ILogger<BasicCatalogCollection> Logger { get; }
+        private ILogger<BasicCatalogService> Logger { get; }
 
         private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new Dictionary<(Locale, Version), Catalog>();
 
-        public BasicCatalogCollection(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogCollection> logger)
+        public BasicCatalogService(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogService> logger)
         {
             DdFetcher = ddFetcher;
             Logger = logger;
@@ -151,6 +151,13 @@ namespace Bjerg
             }
         }
 
+        private static readonly Locale _homeLocale = new Locale("en", "US");
+
+        public async Task<Catalog?> GetHomeCatalog(Version version)
+        {
+            return await GetCatalog(_homeLocale, version);
+        }
+
         #region Disposable
 
         private bool _disposedValue;
@@ -166,7 +173,7 @@ namespace Bjerg
             }
         }
 
-        ~BasicCatalogCollection()
+        ~BasicCatalogService()
         {
             Dispose(disposing: false);
         }
