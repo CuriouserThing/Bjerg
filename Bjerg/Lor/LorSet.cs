@@ -25,7 +25,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddSet.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddSet.Name.Trim()));
                 set = new LorSet(ddSet.NameRef, name, new Uri(ddSet.IconAbsolutePath));
                 return true;
             }

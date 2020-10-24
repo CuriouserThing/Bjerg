@@ -134,7 +134,7 @@ namespace Bjerg
             var supertypes = new Dictionary<string, LorSupertype>();
             foreach (string supertypeRef in supertypeRefs)
             {
-                string name = TextInfo.ToTitleCase(supertypeRef);
+                string name = TextInfo.ToTitleCase(TextInfo.ToLower(supertypeRef));
                 supertypes.Add(supertypeRef, new LorSupertype(name));
             }
 
@@ -146,7 +146,7 @@ namespace Bjerg
             var types = new Dictionary<string, LorType>();
             foreach (string typeRef in typeRefs)
             {
-                string name = TextInfo.ToTitleCase(typeRef);
+                string name = TextInfo.ToTitleCase(TextInfo.ToLower(typeRef));
                 types.Add(typeRef, new LorType(name));
             }
 
@@ -156,7 +156,7 @@ namespace Bjerg
             var subtypes = new Dictionary<string, LorSubtype>();
             foreach (string subtypeRef in subtypeRefs)
             {
-                string name = TextInfo.ToTitleCase(subtypeRef);
+                string name = TextInfo.ToTitleCase(TextInfo.ToLower(subtypeRef));
                 subtypes.Add(subtypeRef, new LorSubtype(name));
             }
 

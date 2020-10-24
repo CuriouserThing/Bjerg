@@ -28,7 +28,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddRegion.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddRegion.Name.Trim()));
                 string description = ddRegion.Abbreviation.Trim();
                 faction = new LorFaction(ddRegion.NameRef, name, description, new Uri(ddRegion.IconAbsolutePath));
                 return true;

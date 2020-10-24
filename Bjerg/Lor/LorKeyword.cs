@@ -24,7 +24,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddKeyword.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddKeyword.Name.Trim()));
                 string description = ddKeyword.Description.Trim();
                 keyword = new LorKeyword(ddKeyword.NameRef, name, description);
                 return true;

@@ -24,7 +24,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddVocabTerm.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddVocabTerm.Name.Trim()));
                 string description = ddVocabTerm.Description.Trim();
                 vocabTerm = new LorVocabTerm(ddVocabTerm.NameRef, name, description);
                 return true;

@@ -21,7 +21,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddSpellSpeed.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddSpellSpeed.Name.Trim()));
                 spellSpeed = new LorSpellSpeed(ddSpellSpeed.NameRef, name);
                 return true;
             }

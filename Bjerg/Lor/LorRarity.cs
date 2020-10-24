@@ -21,7 +21,7 @@ namespace Bjerg.Lor
             }
             else
             {
-                string name = textInfo.ToTitleCase(ddRarity.Name.Trim());
+                string name = textInfo.ToTitleCase(textInfo.ToLower(ddRarity.Name.Trim()));
                 rarity = new LorRarity(ddRarity.NameRef, name);
                 return true;
             }
