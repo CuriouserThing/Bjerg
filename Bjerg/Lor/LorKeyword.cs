@@ -30,5 +30,10 @@ namespace Bjerg.Lor
                 return true;
             }
         }
+
+        public override string ToString()
+        {
+            return $"{Name} ({Key})";
+        }
     }
 }

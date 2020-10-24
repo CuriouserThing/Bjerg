@@ -8,5 +8,10 @@ namespace Bjerg.Lor
         {
             Name = name;
         }
+
+        public override string ToString()
+        {
+            return $"{Name}";
+        }
     }
 }
