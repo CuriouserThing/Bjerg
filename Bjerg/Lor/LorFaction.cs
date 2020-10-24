@@ -4,7 +4,7 @@ using System.Globalization;
 
 namespace Bjerg.Lor
 {
-    public class LorFaction
+    public class LorFaction : LorTerm
     {
         public string Name { get; }
 
@@ -12,7 +12,7 @@ namespace Bjerg.Lor
 
         public Uri IconPath { get; }
 
-        public LorFaction(string name, string abbreviation, Uri iconPath)
+        public LorFaction(string key, string name, string abbreviation, Uri iconPath) : base(key)
         {
             Name = name;
             Abbreviation = abbreviation;
@@ -21,7 +21,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdRegionTerm ddRegion, TextInfo textInfo, out LorFaction? faction)
         {
-            if (ddRegion.Name is null || ddRegion.Abbreviation is null || ddRegion.IconAbsolutePath is null)
+            if (ddRegion.NameRef is null || ddRegion.Name is null || ddRegion.Abbreviation is null || ddRegion.IconAbsolutePath is null)
             {
                 faction = null;
                 return false;
@@ -30,7 +30,7 @@ namespace Bjerg.Lor
             {
                 string name = textInfo.ToTitleCase(ddRegion.Name.Trim());
                 string description = ddRegion.Abbreviation.Trim();
-                faction = new LorFaction(name, description, new Uri(ddRegion.IconAbsolutePath));
+                faction = new LorFaction(ddRegion.NameRef, name, description, new Uri(ddRegion.IconAbsolutePath));
                 return true;
             }
         }

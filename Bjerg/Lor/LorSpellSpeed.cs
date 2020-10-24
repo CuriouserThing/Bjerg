@@ -3,18 +3,18 @@ using System.Globalization;
 
 namespace Bjerg.Lor
 {
-    public class LorSpellSpeed
+    public class LorSpellSpeed : LorTerm
     {
         public string Name { get; }
 
-        public LorSpellSpeed(string name)
+        public LorSpellSpeed(string key, string name) : base(key)
         {
             Name = name;
         }
 
         internal static bool TryFromDataDragon(DdTerm ddSpellSpeed, TextInfo textInfo, out LorSpellSpeed? spellSpeed)
         {
-            if (ddSpellSpeed.Name is null)
+            if (ddSpellSpeed.NameRef is null || ddSpellSpeed.Name is null)
             {
                 spellSpeed = null;
                 return false;
@@ -22,7 +22,7 @@ namespace Bjerg.Lor
             else
             {
                 string name = textInfo.ToTitleCase(ddSpellSpeed.Name.Trim());
-                spellSpeed = new LorSpellSpeed(name);
+                spellSpeed = new LorSpellSpeed(ddSpellSpeed.NameRef, name);
                 return true;
             }
         }

@@ -3,13 +3,13 @@ using System.Globalization;
 
 namespace Bjerg.Lor
 {
-    public class LorVocabTerm
+    public class LorVocabTerm : LorTerm
     {
         public string Name { get; }
 
         public string Description { get; }
 
-        public LorVocabTerm(string name, string description)
+        public LorVocabTerm(string key, string name, string description) : base(key)
         {
             Name = name;
             Description = description;
@@ -17,7 +17,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdVocabTerm ddVocabTerm, TextInfo textInfo, out LorVocabTerm? vocabTerm)
         {
-            if (ddVocabTerm.Name is null || ddVocabTerm.Description is null)
+            if (ddVocabTerm.NameRef is null || ddVocabTerm.Name is null || ddVocabTerm.Description is null)
             {
                 vocabTerm = null;
                 return false;
@@ -26,7 +26,7 @@ namespace Bjerg.Lor
             {
                 string name = textInfo.ToTitleCase(ddVocabTerm.Name.Trim());
                 string description = ddVocabTerm.Description.Trim();
-                vocabTerm = new LorVocabTerm(name, description);
+                vocabTerm = new LorVocabTerm(ddVocabTerm.NameRef, name, description);
                 return true;
             }
         }
