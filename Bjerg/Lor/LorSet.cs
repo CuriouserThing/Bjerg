@@ -18,7 +18,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdIconTerm ddSet, TextInfo textInfo, out LorSet? set)
         {
-            if (ddSet.NameRef is null || ddSet.Name is null || ddSet.IconAbsolutePath is null)
+            if (string.IsNullOrWhiteSpace(ddSet.NameRef)  || ddSet.Name is null || ddSet.IconAbsolutePath is null)
             {
                 set = null;
                 return false;

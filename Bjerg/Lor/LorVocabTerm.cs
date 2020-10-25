@@ -17,7 +17,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdVocabTerm ddVocabTerm, TextInfo textInfo, out LorVocabTerm? vocabTerm)
         {
-            if (ddVocabTerm.NameRef is null || ddVocabTerm.Name is null || ddVocabTerm.Description is null)
+            if (string.IsNullOrWhiteSpace(ddVocabTerm.NameRef)  || ddVocabTerm.Name is null || ddVocabTerm.Description is null)
             {
                 vocabTerm = null;
                 return false;

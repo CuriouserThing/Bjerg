@@ -21,7 +21,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdRegionTerm ddRegion, TextInfo textInfo, out LorFaction? faction)
         {
-            if (ddRegion.NameRef is null || ddRegion.Name is null || ddRegion.Abbreviation is null || ddRegion.IconAbsolutePath is null)
+            if (string.IsNullOrWhiteSpace(ddRegion.NameRef) || ddRegion.Name is null || ddRegion.Abbreviation is null || ddRegion.IconAbsolutePath is null)
             {
                 faction = null;
                 return false;
