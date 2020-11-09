@@ -28,6 +28,18 @@ namespace Bjerg
 
         private static Version FirstSetDtoVersion { get; } = new Version(1, 8, 0);
 
+        private static Dictionary<string, int> RegionIndices { get; } = new Dictionary<string, int>
+        {
+            ["Demacia"] = 0,
+            ["Freljord"] = 1,
+            ["Ionia"] = 2,
+            ["Noxus"] = 3,
+            ["PiltoverZaun"] = 4,
+            ["ShadowIsles"] = 5,
+            ["Bilgewater"] = 6,
+            ["Targon"] = 9,
+        };
+
         private async Task<DdIconTerm[]?> GetSetsAsync(Locale locale, Version version)
         {
             if (!version.IsEarlierThan(FirstSetDtoVersion))
@@ -121,16 +133,19 @@ namespace Bjerg
             }
 
             IReadOnlyList<DdCard>?[] setCardLists = await Task.WhenAll(setCardTasks);
+            var setIndices = new Dictionary<string, int>();
             var cards = new List<DdCard>();
             for (int i = 0; i < setCount; i++)
             {
+                int s = i + 1;
                 IReadOnlyList<DdCard>? setCardList = setCardLists[i];
                 if (setCardList is null)
                 {
-                    Logger.LogError($"Couldn't fetch Data Dragon cards for set number {i + 1}. Therefore, can't create a catalog.");
+                    Logger.LogError($"Couldn't fetch Data Dragon cards for set number {s}. Therefore, can't create a catalog.");
                     return null;
                 }
-                string nameRef = $"Set{i + 1}";
+                string nameRef = $"Set{s}";
+                setIndices.Add(nameRef, s);
                 foreach (DdCard card in setCardList)
                 {
                     card.Set = nameRef; // we may or may not need to patch in the set name -- do it regardless
@@ -143,7 +158,7 @@ namespace Bjerg
                 // Since we're not locking the entire method, check if another caller got here in the time between locks.
                 if (!CatCache.TryGetValue((locale, version), out Catalog? cat))
                 {
-                    var catMaker = new CatalogMaker(locale, version, globals, cards, Logger);
+                    var catMaker = new CatalogMaker(locale, version, globals, cards, RegionIndices, setIndices, Logger);
                     cat = catMaker.MakeCatalog();
                     CatCache.Add((locale, version), cat);
                 }

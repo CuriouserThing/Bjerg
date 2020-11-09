@@ -20,19 +20,29 @@ namespace Bjerg
 
         private IReadOnlyList<DdCard> DdCards { get; }
 
+        private IReadOnlyDictionary<string, int> RegionIndices { get; }
+
+        private IReadOnlyDictionary<string, int> SetIndices { get; }
+
         private ILogger Logger { get; }
 
-        public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, ILogger logger)
+        public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, IReadOnlyDictionary<string, int> regionIndices, IReadOnlyDictionary<string, int> setIndices, ILogger logger)
         {
             Locale = locale;
             TextInfo = locale.CultureInfo.TextInfo;
             Version = version;
             Globals = globals;
             DdCards = ddCards;
+            RegionIndices = regionIndices;
+            SetIndices = setIndices;
             Logger = logger;
         }
 
         private delegate bool LorItemConverter<TDd, TLor>(TDd ddItem, TextInfo textInfo, out TLor? lorItem)
+            where TDd : DdTerm
+            where TLor : class;
+
+        private delegate bool IndexedLorItemConverter<TDd, TLor>(TDd ddItem, int index, TextInfo textInfo, out TLor? lorItem)
             where TDd : DdTerm
             where TLor : class;
 
@@ -56,6 +66,44 @@ namespace Bjerg
                     }
 
                     if (itemConverter(ddItem, TextInfo, out TLor? lorItem))
+                    {
+                        lorItems.Add(ddItem.NameRef, lorItem!);
+                    }
+                    else
+                    {
+                        Logger.LogWarning($"Could not convert a {ddArrayName} DTO with nameRef {ddItem.NameRef}. It may be missing a necessary field. Skipping this object.");
+                    }
+                }
+            }
+            return lorItems;
+        }
+
+        private Dictionary<string, TLor> ConvertIndexedDdItems<TDd, TLor>(IReadOnlyList<TDd>? ddItems, string ddArrayName, IndexedLorItemConverter<TDd, TLor> itemConverter, IReadOnlyDictionary<string, int> indices)
+            where TDd : DdTerm
+            where TLor : class
+        {
+            var lorItems = new Dictionary<string, TLor>();
+            if (ddItems is null)
+            {
+                Logger.LogWarning($"This Data Dragon globals DTO does not contain a {ddArrayName} array.");
+            }
+            else
+            {
+                foreach (TDd ddItem in ddItems)
+                {
+                    if (ddItem.NameRef is null)
+                    {
+                        Logger.LogWarning($"Encountered a DTO in the Data Dragon {ddArrayName} array without a nameRef. Skipping this object.");
+                        continue;
+                    }
+
+                    if (!indices.TryGetValue(ddItem.NameRef, out int index))
+                    {
+                        Logger.LogWarning($"Could not find an index for a {ddArrayName} DTO with nameRef {ddItem.NameRef}. Skipping this object.");
+                        continue;
+                    }
+
+                    if (itemConverter(ddItem, index, TextInfo, out TLor? lorItem))
                     {
                         lorItems.Add(ddItem.NameRef, lorItem!);
                     }
@@ -116,13 +164,13 @@ namespace Bjerg
 
             Dictionary<string, LorKeyword> keywords = ConvertDdItems<DdVocabTerm, LorKeyword>(Globals.Keywords, "keywords", LorKeyword.TryFromDataDragon);
 
-            Dictionary<string, LorFaction> regions = ConvertDdItems<DdRegionTerm, LorFaction>(Globals.Regions, "regions", LorFaction.TryFromDataDragon);
+            Dictionary<string, LorFaction> regions = ConvertIndexedDdItems<DdRegionTerm, LorFaction>(Globals.Regions, "regions", LorFaction.TryFromDataDragon, RegionIndices);
 
             Dictionary<string, LorSpellSpeed> spellSpeeds = ConvertDdItems<DdTerm, LorSpellSpeed>(Globals.SpellSpeeds, "spellSpeeds", LorSpellSpeed.TryFromDataDragon);
 
             Dictionary<string, LorRarity> rarities = ConvertDdItems<DdTerm, LorRarity>(Globals.Rarities, "rarities", LorRarity.TryFromDataDragon);
 
-            Dictionary<string, LorSet> sets = ConvertDdItems<DdIconTerm, LorSet>(Globals.Sets, "sets", LorSet.TryFromDataDragon);
+            Dictionary<string, LorSet> sets = ConvertIndexedDdItems<DdIconTerm, LorSet>(Globals.Sets, "sets", LorSet.TryFromDataDragon, SetIndices);
 
             // Populate collections of [super/sub]types manually from list of cards
 

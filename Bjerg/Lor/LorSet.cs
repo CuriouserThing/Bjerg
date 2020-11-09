@@ -4,19 +4,19 @@ using System.Globalization;
 
 namespace Bjerg.Lor
 {
-    public class LorSet : LorTerm
+    public class LorSet : IndexedLorTerm
     {
         public string Name { get; }
 
         public Uri IconPath { get; }
 
-        public LorSet(string key, string name, Uri iconPath) : base(key)
+        public LorSet(string key, int index, string name, Uri iconPath) : base(key, index)
         {
             Name = name;
             IconPath = iconPath;
         }
 
-        internal static bool TryFromDataDragon(DdIconTerm ddSet, TextInfo textInfo, out LorSet? set)
+        internal static bool TryFromDataDragon(DdIconTerm ddSet, int index, TextInfo textInfo, out LorSet? set)
         {
             if (string.IsNullOrWhiteSpace(ddSet.NameRef)  || ddSet.Name is null || ddSet.IconAbsolutePath is null)
             {
@@ -26,7 +26,7 @@ namespace Bjerg.Lor
             else
             {
                 string name = textInfo.ToTitleCase(textInfo.ToLower(ddSet.Name.Trim()));
-                set = new LorSet(ddSet.NameRef, name, new Uri(ddSet.IconAbsolutePath));
+                set = new LorSet(ddSet.NameRef, index, name, new Uri(ddSet.IconAbsolutePath));
                 return true;
             }
         }
