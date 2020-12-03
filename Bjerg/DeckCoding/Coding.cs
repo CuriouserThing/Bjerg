@@ -33,7 +33,6 @@ namespace Bjerg.DeckCoding
 
         private static IReadOnlyList<RawCardAndCount> GetDeckCardsFromCodeBytes(byte[] bytes)
         {
-            var cards = new List<RawCardAndCount>();
             var span = new ReadOnlySpan<byte>(bytes);
 
             _ = span[0] >> 4; // format (unused)
@@ -44,6 +43,20 @@ namespace Bjerg.DeckCoding
             {
                 throw new ArgumentException($"Can't decode deck code of version {version}. This coder only recognizes a max version of {_maxVersion}.");
             }
+
+            try
+            {
+                return GetDeckCardsFromCodeBytes(span);
+            }
+            catch (Exception ex)
+            {
+                throw new ArgumentException("Can't decode a list of cards from deck code.", ex);
+            }
+        }
+
+        private static IReadOnlyList<RawCardAndCount> GetDeckCardsFromCodeBytes(ReadOnlySpan<byte> span)
+        {
+            var cards = new List<RawCardAndCount>();
 
             for (int c = _maxCountGroup; c > 0; c--) // card count
             {

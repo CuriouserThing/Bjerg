@@ -25,7 +25,17 @@ namespace Bjerg
 
         public static bool TryFromCode(string code, Catalog catalog, out Deck? deck)
         {
-            IReadOnlyList<RawCardAndCount> rccs = Coding.GetDeckCardsFromCode(code);
+            IReadOnlyList<RawCardAndCount> rccs;
+            try
+            {
+                rccs = Coding.GetDeckCardsFromCode(code);
+            }
+            catch
+            {
+                deck = null;
+                return false;
+            }
+
             var ccs = new CardAndCount[rccs.Count];
 
             for (int i = 0; i < rccs.Count; i++)
