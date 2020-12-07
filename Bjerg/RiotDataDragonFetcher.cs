@@ -44,7 +44,7 @@ namespace Bjerg
                 using Stream stream = await response.Content.ReadAsStreamAsync();
                 try
                 {
-                    T result = await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions);
+                    T? result = await JsonSerializer.DeserializeAsync<T>(stream, JsonOptions);
                     return result;
                 }
                 catch (JsonException)
