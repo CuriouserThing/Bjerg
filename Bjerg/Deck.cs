@@ -1,27 +1,27 @@
-using Bjerg.DeckCoding;
-using Bjerg.Lor;
 using System.Collections.Generic;
 using System.Linq;
+using Bjerg.DeckCoding;
+using Bjerg.Lor;
 
 namespace Bjerg
 {
     public class Deck
     {
-        private readonly string _code;
+        public Deck(string code, Locale locale, Version version, IReadOnlyList<CardAndCount> cards)
+        {
+            Code = code;
+            Locale = locale;
+            Version = version;
+            Cards = cards;
+        }
+
+        public string Code { get; }
 
         public Locale Locale { get; }
 
         public Version Version { get; }
 
         public IReadOnlyList<CardAndCount> Cards { get; }
-
-        public Deck(string code, Locale locale, Version version, IReadOnlyList<CardAndCount> cards)
-        {
-            _code = code;
-            Locale = locale;
-            Version = version;
-            Cards = cards;
-        }
 
         public static bool TryFromCode(string code, Catalog catalog, out Deck? deck)
         {
@@ -60,10 +60,13 @@ namespace Bjerg
                         deck = null;
                         return false;
                     }
+
                     LorSet? set = catalog.Sets.Values.SingleOrDefault(s => s.Index == rcc.Set);
                     card = new CodeOnlyCard(outCardCode!, catalog.Locale, catalog.Version, region, set);
                 }
-                ccs[i] = new CardAndCount(card, rcc.Count);;
+
+                ccs[i] = new CardAndCount(card, rcc.Count);
+                ;
             }
 
             deck = new Deck(code, catalog.Locale, catalog.Version, ccs);
@@ -72,7 +75,7 @@ namespace Bjerg
 
         public override string ToString()
         {
-            return _code;
+            return Code;
         }
     }
 }
