@@ -1,15 +1,27 @@
-﻿using Bjerg.DataDragon;
-using Bjerg.Lor;
-using Microsoft.Extensions.Logging;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
+using Bjerg.DataDragon;
+using Bjerg.Lor;
+using Microsoft.Extensions.Logging;
 
 namespace Bjerg
 {
     internal class CatalogMaker
     {
+        public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, IReadOnlyDictionary<string, int> regionIndices, IReadOnlyDictionary<string, int> setIndices, ILogger logger)
+        {
+            Locale = locale;
+            TextInfo = locale.CultureInfo.TextInfo;
+            Version = version;
+            Globals = globals;
+            DdCards = ddCards;
+            RegionIndices = regionIndices;
+            SetIndices = setIndices;
+            Logger = logger;
+        }
+
         private Locale Locale { get; }
 
         private TextInfo TextInfo { get; }
@@ -25,26 +37,6 @@ namespace Bjerg
         private IReadOnlyDictionary<string, int> SetIndices { get; }
 
         private ILogger Logger { get; }
-
-        public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, IReadOnlyDictionary<string, int> regionIndices, IReadOnlyDictionary<string, int> setIndices, ILogger logger)
-        {
-            Locale = locale;
-            TextInfo = locale.CultureInfo.TextInfo;
-            Version = version;
-            Globals = globals;
-            DdCards = ddCards;
-            RegionIndices = regionIndices;
-            SetIndices = setIndices;
-            Logger = logger;
-        }
-
-        private delegate bool LorItemConverter<TDd, TLor>(TDd ddItem, TextInfo textInfo, out TLor? lorItem)
-            where TDd : DdTerm
-            where TLor : class;
-
-        private delegate bool IndexedLorItemConverter<TDd, TLor>(TDd ddItem, int index, TextInfo textInfo, out TLor? lorItem)
-            where TDd : DdTerm
-            where TLor : class;
 
         private Dictionary<string, TLor> ConvertDdItems<TDd, TLor>(IReadOnlyList<TDd>? ddItems, string ddArrayName, LorItemConverter<TDd, TLor> itemConverter)
             where TDd : DdTerm
@@ -75,6 +67,7 @@ namespace Bjerg
                     }
                 }
             }
+
             return lorItems;
         }
 
@@ -113,6 +106,7 @@ namespace Bjerg
                     }
                 }
             }
+
             return lorItems;
         }
 
@@ -152,6 +146,7 @@ namespace Bjerg
                         LogUnrecognizedPropWarning(card, propName, propRef);
                     }
                 }
+
                 valuesSetter(card, values);
             }
         }
@@ -174,38 +169,44 @@ namespace Bjerg
 
             // Populate collections of [super/sub]types manually from list of cards
 
-            IEnumerable<string> supertypeRefs = DdCards
+            var supertypes = new List<LorSupertype>();
+            var supertypeDic = new Dictionary<string, LorSupertype>();
+            foreach (string supertypeRef in DdCards
                 .Select(c => c.Supertype)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s!)
-                .Distinct();
-            var supertypes = new Dictionary<string, LorSupertype>();
-            foreach (string supertypeRef in supertypeRefs)
+                .Distinct())
             {
                 string name = TextInfo.ToTitleCase(TextInfo.ToLower(supertypeRef));
-                supertypes.Add(supertypeRef, new LorSupertype(name));
+                var supertype = new LorSupertype(name);
+                supertypes.Add(supertype);
+                supertypeDic.Add(supertypeRef, new LorSupertype(name));
             }
 
-            IEnumerable<string> typeRefs = DdCards
+            var types = new List<LorType>();
+            var typeDic = new Dictionary<string, LorType>();
+            foreach (string typeRef in DdCards
                 .Select(c => c.Type)
                 .Where(s => !string.IsNullOrWhiteSpace(s))
                 .Select(s => s!)
-                .Distinct();
-            var types = new Dictionary<string, LorType>();
-            foreach (string typeRef in typeRefs)
+                .Distinct())
             {
                 string name = TextInfo.ToTitleCase(TextInfo.ToLower(typeRef));
-                types.Add(typeRef, new LorType(name));
+                var type = new LorType(name);
+                types.Add(type);
+                typeDic.Add(typeRef, type);
             }
 
-            IEnumerable<string> subtypeRefs = DdCards
+            var subtypes = new List<LorSubtype>();
+            var subtypeDic = new Dictionary<string, LorSubtype>();
+            foreach (string subtypeRef in DdCards
                 .SelectMany(c => c.GetDistinctSubtypes())
-                .Distinct();
-            var subtypes = new Dictionary<string, LorSubtype>();
-            foreach (string subtypeRef in subtypeRefs)
+                .Distinct())
             {
                 string name = TextInfo.ToTitleCase(TextInfo.ToLower(subtypeRef));
-                subtypes.Add(subtypeRef, new LorSubtype(name));
+                var subtype = new LorSubtype(name);
+                subtypes.Add(subtype);
+                subtypeDic.Add(subtypeRef, subtype);
             }
 
             // First card pass to initialize cards and add them to lookup
@@ -219,6 +220,7 @@ namespace Bjerg
                     Logger.LogWarning($"{name} does not have a card code. Ignoring card.");
                     continue;
                 }
+
                 if (!CardCode.TryFromString(ddCard.CardCode, out CardCode? cardCode))
                 {
                     Logger.LogWarning($"Could not parse the card code '{cardCode}'. Ignoring card.");
@@ -233,13 +235,13 @@ namespace Bjerg
                 }
 
                 AddPropToCard(card, ddCard.RegionRef, "RegionRef", regions, (c, v) => c.Region = v);
-                AddPropToCard(card, ddCard.Supertype, "Supertype", supertypes, (c, v) => c.Supertype = v);
-                AddPropToCard(card, ddCard.Type, "Type", types, (c, v) => c.Type = v);
+                AddPropToCard(card, ddCard.Supertype, "Supertype", supertypeDic, (c, v) => c.Supertype = v);
+                AddPropToCard(card, ddCard.Type, "Type", typeDic, (c, v) => c.Type = v);
                 AddPropToCard(card, ddCard.SpellSpeedRef, "SpellSpeedRef", spellSpeeds, (c, v) => c.SpellSpeed = v);
                 AddPropToCard(card, ddCard.Set, "Set", sets, (c, v) => c.Set = v);
                 AddPropToCard(card, ddCard.RarityRef, "RarityRef", rarities, (c, v) => c.Rarity = v);
 
-                AddPropListToCard(card, ddCard.Subtypes, "Subtype", subtypes, (c, vs) => c.Subtypes = vs);
+                AddPropListToCard(card, ddCard.Subtypes, "Subtype", subtypeDic, (c, vs) => c.Subtypes = vs);
                 AddPropListToCard(card, ddCard.KeywordRefs, "KeywordRef", keywords, (c, vs) => c.Keywords = vs);
 
                 card.Cost = ddCard.Cost;
@@ -270,6 +272,7 @@ namespace Bjerg
                 if (ddCard.AssociatedCardRefs is null) { continue; }
 
                 if (ddCard.CardCode is null) { continue; }
+
                 string code = ddCard.CardCode!;
 
                 if (!cards.TryGetValue(code, out ICard? card)) { continue; }
@@ -293,7 +296,7 @@ namespace Bjerg
 
             // Return the finished product
 
-            var catalog = new Catalog(Locale, Version)
+            return new Catalog(Locale, Version)
             {
                 VocabTerms = vocabTerms,
                 Keywords = keywords,
@@ -304,9 +307,16 @@ namespace Bjerg
                 Supertypes = supertypes,
                 Types = types,
                 Subtypes = subtypes,
-                Cards = cards,
+                Cards = cards
             };
-            return catalog;
         }
+
+        private delegate bool LorItemConverter<TDd, TLor>(TDd ddItem, TextInfo textInfo, out TLor? lorItem)
+            where TDd : DdTerm
+            where TLor : class;
+
+        private delegate bool IndexedLorItemConverter<TDd, TLor>(TDd ddItem, int index, TextInfo textInfo, out TLor? lorItem)
+            where TDd : DdTerm
+            where TLor : class;
     }
 }
