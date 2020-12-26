@@ -5,12 +5,12 @@ namespace Bjerg.Lor
 {
     public class LorRarity : LorTerm
     {
-        public string Name { get; }
-
         public LorRarity(string key, string name) : base(key)
         {
             Name = name;
         }
+
+        public string Name { get; }
 
         internal static bool TryFromDataDragon(DdTerm ddRarity, TextInfo textInfo, out LorRarity? rarity)
         {

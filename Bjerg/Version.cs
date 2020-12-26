@@ -7,8 +7,6 @@ namespace Bjerg
 {
     public class Version : IEquatable<Version>
     {
-        public IReadOnlyList<int> Numbers { get; }
-
         public Version(params int[] numbers)
         {
             if (numbers.Length == 0)
@@ -18,6 +16,8 @@ namespace Bjerg
 
             Numbers = numbers;
         }
+
+        public IReadOnlyList<int> Numbers { get; }
 
         public override string ToString()
         {

@@ -6,6 +6,15 @@ namespace Bjerg
 {
     public class CodeOnlyCard : ICard
     {
+        public CodeOnlyCard(CardCode code, Locale locale, Version version, LorFaction? region = null, LorSet? set = null)
+        {
+            Code = code;
+            Locale = locale;
+            Version = version;
+            Region = region;
+            Set = set;
+        }
+
         public CardCode Code { get; }
 
         public Locale Locale { get; }
@@ -15,15 +24,6 @@ namespace Bjerg
         public LorFaction? Region { get; }
 
         public LorSet? Set { get; }
-
-        public CodeOnlyCard(CardCode code, Locale locale, Version version, LorFaction? region = null, LorSet? set = null)
-        {
-            Code = code;
-            Locale = locale;
-            Version = version;
-            Region = region;
-            Set = set;
-        }
 
         public string? Name => default;
         public LorSupertype? Supertype => default;

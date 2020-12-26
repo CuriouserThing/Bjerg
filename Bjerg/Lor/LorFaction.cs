@@ -6,18 +6,18 @@ namespace Bjerg.Lor
 {
     public class LorFaction : IndexedLorTerm
     {
-        public string Name { get; }
-
-        public string Abbreviation { get; }
-
-        public Uri IconPath { get; }
-
         public LorFaction(string key, int index, string name, string abbreviation, Uri iconPath) : base(key, index)
         {
             Name = name;
             Abbreviation = abbreviation;
             IconPath = iconPath;
         }
+
+        public string Name { get; }
+
+        public string Abbreviation { get; }
+
+        public Uri IconPath { get; }
 
         internal static bool TryFromDataDragon(DdRegionTerm ddRegion, int index, TextInfo textInfo, out LorFaction? faction)
         {

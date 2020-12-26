@@ -4,15 +4,6 @@ namespace Bjerg
     {
         private readonly string _code;
 
-        public int Set { get; }
-
-        public string Faction { get; }
-
-        public int Number { get; }
-
-        // ReSharper disable once InconsistentNaming
-        public int TNumber { get; }
-
         private CardCode(string code, int set, string faction, int number, int tNumber)
         {
             _code = code;
@@ -21,6 +12,15 @@ namespace Bjerg
             Number = number;
             TNumber = tNumber;
         }
+
+        public int Set { get; }
+
+        public string Faction { get; }
+
+        public int Number { get; }
+
+        // ReSharper disable once InconsistentNaming
+        public int TNumber { get; }
 
         public static bool TryFromString(string code, out CardCode? outCode)
         {

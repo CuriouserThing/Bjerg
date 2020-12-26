@@ -6,14 +6,6 @@ namespace Bjerg
 {
     internal class BasicCard : ICard
     {
-        public CardCode Code { get; }
-
-        public Locale Locale { get; }
-
-        public Version Version { get; }
-
-        public string? Name { get; }
-
         public BasicCard(CardCode code, Locale locale, Version version, string? name)
         {
             Code = code;
@@ -21,6 +13,14 @@ namespace Bjerg
             Version = version;
             Name = name;
         }
+
+        public CardCode Code { get; }
+
+        public Locale Locale { get; }
+
+        public Version Version { get; }
+
+        public string? Name { get; }
 
         public LorFaction? Region { get; internal set; }
 

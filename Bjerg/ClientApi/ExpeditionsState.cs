@@ -2,6 +2,11 @@ namespace Bjerg.ClientApi
 {
     public class ExpeditionsState
     {
+        public override string ToString()
+        {
+            return IsActive ? $"Active expedition ({State}, {Wins}-{Losses})" : "Inactive expedition";
+        }
+
         #region Properties
 
         public bool IsActive { get; set; }
@@ -21,10 +26,5 @@ namespace Bjerg.ClientApi
         public int Losses { get; set; }
 
         #endregion
-
-        public override string ToString()
-        {
-            return IsActive ? $"Active expedition ({State}, {Wins}-{Losses})" : "Inactive expedition";
-        }
     }
 }

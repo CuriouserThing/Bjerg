@@ -9,19 +9,20 @@ namespace Bjerg
 {
     public class BasicCatalogService : ICatalogService
     {
+        private static readonly Locale HomeLocale = new("en", "US");
         private readonly object _syncRoot = new();
-
-        private IDataDragonFetcher DdFetcher { get; }
-
-        private ILogger Logger { get; }
-
-        private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new();
 
         public BasicCatalogService(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogService> logger)
         {
             DdFetcher = ddFetcher;
             Logger = logger;
         }
+
+        private IDataDragonFetcher DdFetcher { get; }
+
+        private ILogger Logger { get; }
+
+        private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new();
 
         private static Version Set2ReleaseVersion { get; } = new(1, 0, 0);
 
@@ -40,64 +41,6 @@ namespace Bjerg
             ["Bilgewater"] = 6,
             ["Targon"] = 9,
         };
-
-        private async Task<DdIconTerm[]?> GetSetsAsync(Locale locale, Version version)
-        {
-            if (!version.IsEarlierThan(FirstSetDtoVersion))
-            {
-                Logger.LogError($"Version {version} isn't earlier than version {FirstSetDtoVersion}, when Riot introduced set DTOs. This version should have set DTOs, so it's unclear how to get sets for this version.");
-                return null;
-            }
-
-            Catalog? setsCatalog;
-            using (Logger.BeginScope(locale))
-            using (Logger.BeginScope(version))
-            {
-                setsCatalog = await GetCatalog(locale, FirstSetDtoVersion);
-            }
-
-            if (setsCatalog is null)
-            {
-                Logger.LogError($"Couldn't get a catalog for version {FirstSetDtoVersion}, when Riot introduced set DTOs. Therefore, can't find a catalog with sets to reference for version {version}.");
-                return null;
-            }
-
-            int setCount;
-            if (!version.IsEarlierThan(Set3ReleaseVersion))
-            {
-                setCount = 3;
-            }
-            else if (!version.IsEarlierThan(Set2ReleaseVersion))
-            {
-                setCount = 2;
-            }
-            else
-            {
-                setCount = 1;
-            }
-
-            var ddSets = new DdIconTerm[setCount];
-            for (var i = 0; i < setCount; i++)
-            {
-                string setNameRef = $"Set{i + 1}";
-                if (setsCatalog.Sets.TryGetValue(setNameRef, out LorSet? set))
-                {
-                    ddSets[i] = new DdIconTerm
-                    {
-                        NameRef = setNameRef,
-                        Name = set.Name,
-                        IconAbsolutePath = set.IconPath.ToString(),
-                    };
-                }
-                else
-                {
-                    Logger.LogError($"Version {FirstSetDtoVersion}, when Riot introduced set DTOs, doesn't have a reference to {setNameRef}, but it should.");
-                    return null;
-                }
-            }
-
-            return ddSets;
-        }
 
         public async Task<Catalog?> GetCatalog(Locale locale, Version version)
         {
@@ -170,11 +113,67 @@ namespace Bjerg
             }
         }
 
-        private static readonly Locale HomeLocale = new("en", "US");
-
         public async Task<Catalog?> GetHomeCatalog(Version version)
         {
             return await GetCatalog(HomeLocale, version);
+        }
+
+        private async Task<DdIconTerm[]?> GetSetsAsync(Locale locale, Version version)
+        {
+            if (!version.IsEarlierThan(FirstSetDtoVersion))
+            {
+                Logger.LogError($"Version {version} isn't earlier than version {FirstSetDtoVersion}, when Riot introduced set DTOs. This version should have set DTOs, so it's unclear how to get sets for this version.");
+                return null;
+            }
+
+            Catalog? setsCatalog;
+            using (Logger.BeginScope(locale))
+            using (Logger.BeginScope(version))
+            {
+                setsCatalog = await GetCatalog(locale, FirstSetDtoVersion);
+            }
+
+            if (setsCatalog is null)
+            {
+                Logger.LogError($"Couldn't get a catalog for version {FirstSetDtoVersion}, when Riot introduced set DTOs. Therefore, can't find a catalog with sets to reference for version {version}.");
+                return null;
+            }
+
+            int setCount;
+            if (!version.IsEarlierThan(Set3ReleaseVersion))
+            {
+                setCount = 3;
+            }
+            else if (!version.IsEarlierThan(Set2ReleaseVersion))
+            {
+                setCount = 2;
+            }
+            else
+            {
+                setCount = 1;
+            }
+
+            var ddSets = new DdIconTerm[setCount];
+            for (var i = 0; i < setCount; i++)
+            {
+                string setNameRef = $"Set{i + 1}";
+                if (setsCatalog.Sets.TryGetValue(setNameRef, out LorSet? set))
+                {
+                    ddSets[i] = new DdIconTerm
+                    {
+                        NameRef = setNameRef,
+                        Name = set.Name,
+                        IconAbsolutePath = set.IconPath.ToString(),
+                    };
+                }
+                else
+                {
+                    Logger.LogError($"Version {FirstSetDtoVersion}, when Riot introduced set DTOs, doesn't have a reference to {setNameRef}, but it should.");
+                    return null;
+                }
+            }
+
+            return ddSets;
         }
 
         #region Disposable

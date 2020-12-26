@@ -6,15 +6,15 @@ namespace Bjerg.Lor
 {
     public class LorSet : IndexedLorTerm
     {
-        public string Name { get; }
-
-        public Uri IconPath { get; }
-
         public LorSet(string key, int index, string name, Uri iconPath) : base(key, index)
         {
             Name = name;
             IconPath = iconPath;
         }
+
+        public string Name { get; }
+
+        public Uri IconPath { get; }
 
         internal static bool TryFromDataDragon(DdIconTerm ddSet, int index, TextInfo textInfo, out LorSet? set)
         {

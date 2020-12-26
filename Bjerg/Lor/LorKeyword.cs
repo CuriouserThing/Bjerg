@@ -5,15 +5,15 @@ namespace Bjerg.Lor
 {
     public class LorKeyword : LorTerm
     {
-        public string Name { get; }
-
-        public string Description { get; }
-
         public LorKeyword(string key, string name, string description) : base(key)
         {
             Name = name;
             Description = description;
         }
+
+        public string Name { get; }
+
+        public string Description { get; }
 
         internal static bool TryFromDataDragon(DdVocabTerm ddKeyword, TextInfo textInfo, out LorKeyword? keyword)
         {

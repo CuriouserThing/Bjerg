@@ -5,6 +5,12 @@ namespace Bjerg
 {
     public class Locale : IEquatable<Locale>
     {
+        public Locale(string language, string country)
+        {
+            Language = language.ToLower();
+            Country = country.ToUpper();
+        }
+
         /// <summary>
         ///     ISO-639-1 (always lower-case)
         /// </summary>
@@ -14,12 +20,6 @@ namespace Bjerg
         ///     ISO 3166-1 alpha-2 (always upper-case)
         /// </summary>
         public string Country { get; }
-
-        public Locale(string language, string country)
-        {
-            Language = language.ToLower();
-            Country = country.ToUpper();
-        }
 
         private string IsoName => $"{Language}-{Country}";
 

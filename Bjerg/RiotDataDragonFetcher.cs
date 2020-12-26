@@ -11,6 +11,12 @@ namespace Bjerg
 {
     public class RiotDataDragonFetcher : IDataDragonFetcher
     {
+        public RiotDataDragonFetcher(ILogger<RiotDataDragonFetcher> logger)
+        {
+            Client = new HttpClient();
+            Logger = logger;
+        }
+
         private HttpClient Client { get; }
 
         private ILogger Logger { get; }
@@ -20,10 +26,21 @@ namespace Bjerg
             PropertyNameCaseInsensitive = true,
         };
 
-        public RiotDataDragonFetcher(ILogger<RiotDataDragonFetcher> logger)
+        public async Task<DdGlobals?> FetchGlobals(Locale locale, Version version)
         {
-            Client = new HttpClient();
-            Logger = logger;
+            string l = TransformLocaleForUrl(locale);
+            string v = TransformVersionForUrl(version);
+            var uri = new Uri($"https://dd.b.pvp.net/{v}/core/{l}/data/globals-{l}.json");
+            return await FetchAsync<DdGlobals>(uri);
+        }
+
+        public async Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, int setNumber)
+        {
+            string l = TransformLocaleForUrl(locale);
+            string v = TransformVersionForUrl(version);
+            string s = $"set{setNumber}";
+            var uri = new Uri($"https://dd.b.pvp.net/{v}/{s}/{l}/data/{s}-{l}.json");
+            return await FetchAsync<IReadOnlyList<DdCard>>(uri);
         }
 
         private static string TransformLocaleForUrl(Locale locale)
@@ -58,23 +75,6 @@ namespace Bjerg
                 Logger.LogError($"{uri} returned status code {response.StatusCode}.");
                 return null;
             }
-        }
-
-        public async Task<DdGlobals?> FetchGlobals(Locale locale, Version version)
-        {
-            string l = TransformLocaleForUrl(locale);
-            string v = TransformVersionForUrl(version);
-            var uri = new Uri($"https://dd.b.pvp.net/{v}/core/{l}/data/globals-{l}.json");
-            return await FetchAsync<DdGlobals>(uri);
-        }
-
-        public async Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, int setNumber)
-        {
-            string l = TransformLocaleForUrl(locale);
-            string v = TransformVersionForUrl(version);
-            string s = $"set{setNumber}";
-            var uri = new Uri($"https://dd.b.pvp.net/{v}/{s}/{l}/data/{s}-{l}.json");
-            return await FetchAsync<IReadOnlyList<DdCard>>(uri);
         }
 
         #region Disposable

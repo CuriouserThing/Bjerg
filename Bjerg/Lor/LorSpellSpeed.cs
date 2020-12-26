@@ -5,12 +5,12 @@ namespace Bjerg.Lor
 {
     public class LorSpellSpeed : LorTerm
     {
-        public string Name { get; }
-
         public LorSpellSpeed(string key, string name) : base(key)
         {
             Name = name;
         }
+
+        public string Name { get; }
 
         internal static bool TryFromDataDragon(DdTerm ddSpellSpeed, TextInfo textInfo, out LorSpellSpeed? spellSpeed)
         {
