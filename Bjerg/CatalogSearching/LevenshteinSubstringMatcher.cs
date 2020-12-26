@@ -42,6 +42,27 @@ namespace Bjerg.CatalogSearching
             return 1f - (distance / distanceMax);
         }
 
+        private void FindDistance(string source, string target, float bookend, float bookendTaper, out float distance, out float distanceMax)
+        {
+            // A Wagner-Fischer implementation that tapers off the weight of insertions before + after the source string.
+
+            float[,] d = GetDic(0, target.Length);
+            float[,] w = GetDic(1, target.Length);
+
+            FillDistances(source, target, bookend, bookendTaper, d, w);
+
+            // The distance
+            distance = d[source.Length, target.Length];
+
+            // The max distance between arbitrary permutations of characters the lengths of the source and the target
+            distanceMax = source.Length;
+            int delta = target.Length - source.Length;
+            if (delta > 0)
+            {
+                distanceMax += d[0, delta];
+            }
+        }
+
         private float[,] GetDic(int index, int targetLength)
         {
             if (!DicCaches[index].TryGetValue(targetLength, out float[,]? dic))
@@ -53,21 +74,17 @@ namespace Bjerg.CatalogSearching
             return dic;
         }
 
-        private void FindDistance(string source, string target, float bookend, float bookendTaper, out float distance, out float distanceMax)
+        private static void FillDistances(string source, string target, float bookend, float bookendTaper, float[,] d, float[,] w)
         {
-            // A Wagner-Fischer implementation that tapers off the weight of insertions before + after the source string.
-
-            float[,] d = GetDic(0, target.Length);
-            float[,] w = GetDic(1, target.Length);
-
-            for (int i = 1; i <= source.Length; i++)
+            for (int i = 0; i <= source.Length; i++)
             {
                 d[i, 0] = i;
                 w[i, 0] = 1f;
             }
 
+            // Overwrite loop values for first (pre-source bookend) and last (post-source bookend) rows
             w[0, 0] = bookend;
-            w[source.Length, 0] = bookend; // overwrite loop value
+            w[source.Length, 0] = bookend;
 
             for (int j = 1; j <= target.Length; j++)
             {
@@ -80,6 +97,7 @@ namespace Bjerg.CatalogSearching
             {
                 char ic = source[i - 1];
                 bool end = i == source.Length;
+                float wMult = end ? bookendTaper : 1f;
                 for (int j = 1; j <= target.Length; j++)
                 {
                     char jc = target[j - 1];
@@ -90,7 +108,7 @@ namespace Bjerg.CatalogSearching
                     if (ins <= del && ins <= sub)
                     {
                         d[i, j] = ins;
-                        w[i, j] = w[i, j - 1] * (end ? bookendTaper : 1f);
+                        w[i, j] = w[i, j - 1] * wMult;
                     }
                     else if (del <= sub)
                     {
@@ -103,17 +121,6 @@ namespace Bjerg.CatalogSearching
                         w[i, j] = w[i - 1, j - 1];
                     }
                 }
-            }
-
-            // The distance
-            distance = d[source.Length, target.Length];
-
-            // The max distance between arbitrary permutations of characters the lengths of the source and the target
-            distanceMax = source.Length;
-            int delta = target.Length - source.Length;
-            if (delta > 0)
-            {
-                distanceMax += d[0, delta];
             }
         }
     }
