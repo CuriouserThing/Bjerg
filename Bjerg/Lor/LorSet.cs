@@ -16,7 +16,7 @@ namespace Bjerg.Lor
 
         public Uri IconPath { get; }
 
-        internal static bool TryFromDataDragon(DdIconTerm ddSet, int index, TextInfo textInfo, out LorSet? set)
+        internal static bool TryFromDataDragon(DdSet ddSet, int index, TextInfo textInfo, out LorSet? set)
         {
             if (string.IsNullOrWhiteSpace(ddSet.NameRef) || ddSet.Name is null || ddSet.IconAbsolutePath is null)
             {

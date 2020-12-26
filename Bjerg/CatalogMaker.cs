@@ -157,15 +157,15 @@ namespace Bjerg
 
             Dictionary<string, LorVocabTerm> vocabTerms = ConvertDdItems<DdVocabTerm, LorVocabTerm>(Globals.VocabTerms, "vocabTerms", LorVocabTerm.TryFromDataDragon);
 
-            Dictionary<string, LorKeyword> keywords = ConvertDdItems<DdVocabTerm, LorKeyword>(Globals.Keywords, "keywords", LorKeyword.TryFromDataDragon);
+            Dictionary<string, LorKeyword> keywords = ConvertDdItems<DdKeyword, LorKeyword>(Globals.Keywords, "keywords", LorKeyword.TryFromDataDragon);
 
-            Dictionary<string, LorFaction> regions = ConvertIndexedDdItems<DdRegionTerm, LorFaction>(Globals.Regions, "regions", LorFaction.TryFromDataDragon, RegionIndices);
+            Dictionary<string, LorFaction> regions = ConvertIndexedDdItems<DdRegion, LorFaction>(Globals.Regions, "regions", LorFaction.TryFromDataDragon, RegionIndices);
 
-            Dictionary<string, LorSpellSpeed> spellSpeeds = ConvertDdItems<DdTerm, LorSpellSpeed>(Globals.SpellSpeeds, "spellSpeeds", LorSpellSpeed.TryFromDataDragon);
+            Dictionary<string, LorSpellSpeed> spellSpeeds = ConvertDdItems<DdSpellSpeed, LorSpellSpeed>(Globals.SpellSpeeds, "spellSpeeds", LorSpellSpeed.TryFromDataDragon);
 
-            Dictionary<string, LorRarity> rarities = ConvertDdItems<DdTerm, LorRarity>(Globals.Rarities, "rarities", LorRarity.TryFromDataDragon);
+            Dictionary<string, LorRarity> rarities = ConvertDdItems<DdRarity, LorRarity>(Globals.Rarities, "rarities", LorRarity.TryFromDataDragon);
 
-            Dictionary<string, LorSet> sets = ConvertIndexedDdItems<DdIconTerm, LorSet>(Globals.Sets, "sets", LorSet.TryFromDataDragon, SetIndices);
+            Dictionary<string, LorSet> sets = ConvertIndexedDdItems<DdSet, LorSet>(Globals.Sets, "sets", LorSet.TryFromDataDragon, SetIndices);
 
             // Populate collections of [super/sub]types manually from list of cards
 

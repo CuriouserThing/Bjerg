@@ -4,14 +4,14 @@ namespace Bjerg.DataDragon
     {
         public DdVocabTerm[]? VocabTerms { get; set; }
 
-        public DdVocabTerm[]? Keywords { get; set; }
+        public DdKeyword[]? Keywords { get; set; }
 
-        public DdRegionTerm[]? Regions { get; set; }
+        public DdRegion[]? Regions { get; set; }
 
-        public DdTerm[]? SpellSpeeds { get; set; }
+        public DdSpellSpeed[]? SpellSpeeds { get; set; }
 
-        public DdTerm[]? Rarities { get; set; }
+        public DdRarity[]? Rarities { get; set; }
 
-        public DdIconTerm[]? Sets { get; set; }
+        public DdSet[]? Sets { get; set; }
     }
 }

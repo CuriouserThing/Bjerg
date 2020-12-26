@@ -12,7 +12,7 @@ namespace Bjerg.Lor
 
         public string Name { get; }
 
-        internal static bool TryFromDataDragon(DdTerm ddRarity, TextInfo textInfo, out LorRarity? rarity)
+        internal static bool TryFromDataDragon(DdRarity ddRarity, TextInfo textInfo, out LorRarity? rarity)
         {
             if (string.IsNullOrWhiteSpace(ddRarity.NameRef) || ddRarity.Name is null)
             {

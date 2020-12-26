@@ -20,8 +20,8 @@ namespace Bjerg
         /// </summary>
         /// <param name="locale">The cards' locale.</param>
         /// <param name="version">The cards' version.</param>
-        /// <param name="setNumber">The cards' set.</param>
+        /// <param name="set">The cards' set.</param>
         /// <returns>The card DTOs. If non-null, the function succeeded. If null, the function failed.</returns>
-        Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, int setNumber);
+        Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, DdSet set);
     }
 }

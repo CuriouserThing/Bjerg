@@ -19,7 +19,7 @@ namespace Bjerg.Lor
 
         public Uri IconPath { get; }
 
-        internal static bool TryFromDataDragon(DdRegionTerm ddRegion, int index, TextInfo textInfo, out LorFaction? faction)
+        internal static bool TryFromDataDragon(DdRegion ddRegion, int index, TextInfo textInfo, out LorFaction? faction)
         {
             if (string.IsNullOrWhiteSpace(ddRegion.NameRef) || ddRegion.Name is null || ddRegion.Abbreviation is null || ddRegion.IconAbsolutePath is null)
             {

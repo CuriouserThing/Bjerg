@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Bjerg.DataDragon;
 using Bjerg.Lor;
@@ -71,12 +72,9 @@ namespace Bjerg
             }
 
             int setCount = globals.Sets.Length;
-            var setCardTasks = new Task<IReadOnlyList<DdCard>?>[setCount];
-            for (var i = 0; i < setCount; i++)
-            {
-                setCardTasks[i] = DdFetcher.FetchSetCards(locale, version, i + 1);
-            }
-
+            Task<IReadOnlyList<DdCard>?>[] setCardTasks = globals.Sets
+                .Select(s => DdFetcher.FetchSetCards(locale, version, s))
+                .ToArray();
             IReadOnlyList<DdCard>?[] setCardLists = await Task.WhenAll(setCardTasks);
             var setIndices = new Dictionary<string, int>();
             var cards = new List<DdCard>();
@@ -118,7 +116,7 @@ namespace Bjerg
             return await GetCatalog(HomeLocale, version);
         }
 
-        private async Task<DdIconTerm[]?> GetSetsAsync(Locale locale, Version version)
+        private async Task<DdSet[]?> GetSetsAsync(Locale locale, Version version)
         {
             if (!version.IsEarlierThan(FirstSetDtoVersion))
             {
@@ -153,13 +151,13 @@ namespace Bjerg
                 setCount = 1;
             }
 
-            var ddSets = new DdIconTerm[setCount];
+            var ddSets = new DdSet[setCount];
             for (var i = 0; i < setCount; i++)
             {
                 string setNameRef = $"Set{i + 1}";
                 if (setsCatalog.Sets.TryGetValue(setNameRef, out LorSet? set))
                 {
-                    ddSets[i] = new DdIconTerm
+                    ddSets[i] = new DdSet
                     {
                         NameRef = setNameRef,
                         Name = set.Name,

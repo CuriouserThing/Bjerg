@@ -1,6 +1,6 @@
 namespace Bjerg.DataDragon
 {
-    public class DdIconTerm : DdTerm
+    public class DdSet : DdTerm
     {
         public string? IconAbsolutePath { get; set; }
     }

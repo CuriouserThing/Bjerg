@@ -34,11 +34,13 @@ namespace Bjerg
             return await FetchAsync<DdGlobals>(uri);
         }
 
-        public async Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, int setNumber)
+        public async Task<IReadOnlyList<DdCard>?> FetchSetCards(Locale locale, Version version, DdSet set)
         {
+            if (set.NameRef is null) { return null; }
+
             string l = TransformLocaleForUrl(locale);
             string v = TransformVersionForUrl(version);
-            string s = $"set{setNumber}";
+            string s = set.NameRef.ToLowerInvariant();
             var uri = new Uri($"https://dd.b.pvp.net/{v}/{s}/{l}/data/{s}-{l}.json");
             return await FetchAsync<IReadOnlyList<DdCard>>(uri);
         }

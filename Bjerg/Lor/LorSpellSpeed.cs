@@ -12,7 +12,7 @@ namespace Bjerg.Lor
 
         public string Name { get; }
 
-        internal static bool TryFromDataDragon(DdTerm ddSpellSpeed, TextInfo textInfo, out LorSpellSpeed? spellSpeed)
+        internal static bool TryFromDataDragon(DdSpellSpeed ddSpellSpeed, TextInfo textInfo, out LorSpellSpeed? spellSpeed)
         {
             if (string.IsNullOrWhiteSpace(ddSpellSpeed.NameRef) || ddSpellSpeed.Name is null)
             {
