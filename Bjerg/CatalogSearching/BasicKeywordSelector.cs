@@ -22,7 +22,7 @@ namespace Bjerg.CatalogSearching
         public IReadOnlyList<LorKeyword> Expand(LorKeyword item)
         {
             // Passthrough
-            return new[] {item};
+            return new[] { item };
         }
     }
 }

@@ -1,6 +1,6 @@
-using Bjerg.DataDragon;
 using System;
 using System.Globalization;
+using Bjerg.DataDragon;
 
 namespace Bjerg.Lor
 {

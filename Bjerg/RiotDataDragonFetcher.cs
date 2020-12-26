@@ -1,11 +1,11 @@
-using Bjerg.DataDragon;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Bjerg.DataDragon;
+using Microsoft.Extensions.Logging;
 
 namespace Bjerg
 {
@@ -15,7 +15,7 @@ namespace Bjerg
 
         private ILogger Logger { get; }
 
-        private JsonSerializerOptions JsonOptions { get; } = new JsonSerializerOptions
+        private JsonSerializerOptions JsonOptions { get; } = new()
         {
             PropertyNameCaseInsensitive = true,
         };
@@ -96,12 +96,12 @@ namespace Bjerg
 
         ~RiotDataDragonFetcher()
         {
-            Dispose(disposing: false);
+            Dispose(false);
         }
 
         public void Dispose()
         {
-            Dispose(disposing: true);
+            Dispose(true);
             GC.SuppressFinalize(this);
         }
 

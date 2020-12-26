@@ -4,7 +4,7 @@ namespace Bjerg.ClientApi
     {
         #region Properties
 
-        public int GameID { get; set; }
+        public int GameId { get; set; }
 
         public bool LocalPlayerWon { get; set; }
 

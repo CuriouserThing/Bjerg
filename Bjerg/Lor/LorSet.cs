@@ -1,6 +1,6 @@
-using Bjerg.DataDragon;
 using System;
 using System.Globalization;
+using Bjerg.DataDragon;
 
 namespace Bjerg.Lor
 {
@@ -18,7 +18,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdIconTerm ddSet, int index, TextInfo textInfo, out LorSet? set)
         {
-            if (string.IsNullOrWhiteSpace(ddSet.NameRef)  || ddSet.Name is null || ddSet.IconAbsolutePath is null)
+            if (string.IsNullOrWhiteSpace(ddSet.NameRef) || ddSet.Name is null || ddSet.IconAbsolutePath is null)
             {
                 set = null;
                 return false;

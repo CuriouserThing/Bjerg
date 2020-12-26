@@ -12,7 +12,7 @@ namespace Bjerg.CatalogSearching
 
         public IReadOnlyList<T> Expand(T item)
         {
-            return new[] {item};
+            return new[] { item };
         }
     }
 }

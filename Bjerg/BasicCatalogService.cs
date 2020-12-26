@@ -1,20 +1,21 @@
+using System;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 using Bjerg.DataDragon;
 using Bjerg.Lor;
 using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace Bjerg
 {
     public class BasicCatalogService : ICatalogService
     {
-        private readonly object _syncRoot = new object();
+        private readonly object _syncRoot = new();
 
         private IDataDragonFetcher DdFetcher { get; }
 
         private ILogger Logger { get; }
 
-        private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new Dictionary<(Locale, Version), Catalog>();
+        private Dictionary<(Locale, Version), Catalog> CatCache { get; } = new();
 
         public BasicCatalogService(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogService> logger)
         {
@@ -22,13 +23,13 @@ namespace Bjerg
             Logger = logger;
         }
 
-        private static Version Set2ReleaseVersion { get; } = new Version(1, 0, 0);
+        private static Version Set2ReleaseVersion { get; } = new(1, 0, 0);
 
-        private static Version Set3ReleaseVersion { get; } = new Version(1, 8, 0);
+        private static Version Set3ReleaseVersion { get; } = new(1, 8, 0);
 
-        private static Version FirstSetDtoVersion { get; } = new Version(1, 8, 0);
+        private static Version FirstSetDtoVersion { get; } = new(1, 8, 0);
 
-        private static Dictionary<string, int> RegionIndices { get; } = new Dictionary<string, int>
+        private static Dictionary<string, int> RegionIndices { get; } = new()
         {
             ["Demacia"] = 0,
             ["Freljord"] = 1,
@@ -76,7 +77,7 @@ namespace Bjerg
             }
 
             var ddSets = new DdIconTerm[setCount];
-            for (int i = 0; i < setCount; i++)
+            for (var i = 0; i < setCount; i++)
             {
                 string setNameRef = $"Set{i + 1}";
                 if (setsCatalog.Sets.TryGetValue(setNameRef, out LorSet? set))
@@ -94,6 +95,7 @@ namespace Bjerg
                     return null;
                 }
             }
+
             return ddSets;
         }
 
@@ -110,24 +112,24 @@ namespace Bjerg
             DdGlobals? globals = await DdFetcher.FetchGlobals(locale, version);
             if (globals is null)
             {
-                Logger.LogError($"Couldn't fetch Data Dragon globals. Therefore, can't create a catalog.");
+                Logger.LogError("Couldn't fetch Data Dragon globals. Therefore, can't create a catalog.");
                 return null;
             }
 
             if (globals.Sets is null)
             {
-                Logger.LogInformation($"No set DTO array found in Data Dragon globals. Attempting to patch in an array manually.");
+                Logger.LogInformation("No set DTO array found in Data Dragon globals. Attempting to patch in an array manually.");
                 globals.Sets = await GetSetsAsync(locale, version);
                 if (globals.Sets is null)
                 {
-                    Logger.LogError($"Couldn't patch in a set array. Therefore, can't create a catalog.");
+                    Logger.LogError("Couldn't patch in a set array. Therefore, can't create a catalog.");
                     return null;
                 }
             }
 
             int setCount = globals.Sets.Length;
             var setCardTasks = new Task<IReadOnlyList<DdCard>?>[setCount];
-            for (int i = 0; i < setCount; i++)
+            for (var i = 0; i < setCount; i++)
             {
                 setCardTasks[i] = DdFetcher.FetchSetCards(locale, version, i + 1);
             }
@@ -135,7 +137,7 @@ namespace Bjerg
             IReadOnlyList<DdCard>?[] setCardLists = await Task.WhenAll(setCardTasks);
             var setIndices = new Dictionary<string, int>();
             var cards = new List<DdCard>();
-            for (int i = 0; i < setCount; i++)
+            for (var i = 0; i < setCount; i++)
             {
                 int s = i + 1;
                 IReadOnlyList<DdCard>? setCardList = setCardLists[i];
@@ -144,6 +146,7 @@ namespace Bjerg
                     Logger.LogError($"Couldn't fetch Data Dragon cards for set number {s}. Therefore, can't create a catalog.");
                     return null;
                 }
+
                 string nameRef = $"Set{s}";
                 setIndices.Add(nameRef, s);
                 foreach (DdCard card in setCardList)
@@ -162,15 +165,16 @@ namespace Bjerg
                     cat = catMaker.MakeCatalog();
                     CatCache.Add((locale, version), cat);
                 }
+
                 return cat;
             }
         }
 
-        private static readonly Locale _homeLocale = new Locale("en", "US");
+        private static readonly Locale HomeLocale = new("en", "US");
 
         public async Task<Catalog?> GetHomeCatalog(Version version)
         {
-            return await GetCatalog(_homeLocale, version);
+            return await GetCatalog(HomeLocale, version);
         }
 
         #region Disposable
@@ -184,19 +188,20 @@ namespace Bjerg
                 if (disposing)
                 {
                 }
+
                 _disposedValue = true;
             }
         }
 
         ~BasicCatalogService()
         {
-            Dispose(disposing: false);
+            Dispose(false);
         }
 
         public void Dispose()
         {
-            Dispose(disposing: true);
-            System.GC.SuppressFinalize(this);
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
 
         #endregion

@@ -4,7 +4,7 @@ namespace Bjerg.ClientApi
     {
         #region Properties
 
-        public int CardID { get; set; }
+        public int CardId { get; set; }
 
         public string? CardCode { get; set; }
 

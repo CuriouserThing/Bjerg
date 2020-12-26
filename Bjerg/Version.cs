@@ -15,38 +15,41 @@ namespace Bjerg
             {
                 throw new ArgumentException(null, nameof(Numbers));
             }
+
             Numbers = numbers;
         }
 
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder().Append(Numbers[0]);
-            for (int i = 1; i < Numbers.Count; i++)
+            for (var i = 1; i < Numbers.Count; i++)
             {
                 _ = sb.Append($".{Numbers[i]}");
             }
+
             return sb.ToString();
         }
 
         private int GetTrimmedLength()
         {
-            int n = 0;
-            for (int i = 0; i < Numbers.Count; i++)
+            var n = 0;
+            for (var i = 0; i < Numbers.Count; i++)
             {
                 if (Numbers[i] != 0)
                 {
                     n = i + 1;
                 }
             }
+
             return n;
         }
 
         /// <summary>
-        /// Determine whether two versions are equal after trimming trailing zeros from both.
+        ///     Determine whether two versions are equal after trimming trailing zeros from both.
         /// </summary>
         public bool IsEquivalentTo(Version other)
         {
-            int ta = this.GetTrimmedLength();
+            int ta = GetTrimmedLength();
             int tb = other.GetTrimmedLength();
 
             if (ta != tb)
@@ -54,9 +57,9 @@ namespace Bjerg
                 return false;
             }
 
-            for (int i = 0; i < ta; i++)
+            for (var i = 0; i < ta; i++)
             {
-                if (this.Numbers[i] != other.Numbers[i])
+                if (Numbers[i] != other.Numbers[i])
                 {
                     return false;
                 }
@@ -66,21 +69,22 @@ namespace Bjerg
         }
 
         /// <summary>
-        /// Determine whether this version is earlier than another version.
+        ///     Determine whether this version is earlier than another version.
         /// </summary>
         public bool IsEarlierThan(Version other)
         {
-            int ta = this.GetTrimmedLength();
+            int ta = GetTrimmedLength();
             int tb = other.GetTrimmedLength();
             int tm = Math.Min(ta, tb);
 
-            for (int i = 0; i < tm; i++)
+            for (var i = 0; i < tm; i++)
             {
-                if (this.Numbers[i] < other.Numbers[i])
+                if (Numbers[i] < other.Numbers[i])
                 {
                     return true;
                 }
-                if (this.Numbers[i] > other.Numbers[i])
+
+                if (Numbers[i] > other.Numbers[i])
                 {
                     return false;
                 }
@@ -90,21 +94,22 @@ namespace Bjerg
         }
 
         /// <summary>
-        /// Determine whether this version is later than another version.
+        ///     Determine whether this version is later than another version.
         /// </summary>
         public bool IsLaterThan(Version other)
         {
-            int ta = this.GetTrimmedLength();
+            int ta = GetTrimmedLength();
             int tb = other.GetTrimmedLength();
             int tm = Math.Min(ta, tb);
 
-            for (int i = 0; i < tm; i++)
+            for (var i = 0; i < tm; i++)
             {
-                if (this.Numbers[i] > other.Numbers[i])
+                if (Numbers[i] > other.Numbers[i])
                 {
                     return true;
                 }
-                if (this.Numbers[i] < other.Numbers[i])
+
+                if (Numbers[i] < other.Numbers[i])
                 {
                     return false;
                 }
@@ -124,17 +129,23 @@ namespace Bjerg
         public bool Equals(Version? other)
         {
             return !(other is null)
-                && this.Numbers.SequenceEqual(other.Numbers);
+                   && Numbers.SequenceEqual(other.Numbers);
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is Version other && this.Equals(other);
+            return obj is Version other && Equals(other);
         }
 
-        public static bool operator ==(Version a, Version b) => a.Equals(b);
+        public static bool operator ==(Version a, Version b)
+        {
+            return a.Equals(b);
+        }
 
-        public static bool operator !=(Version a, Version b) => !a.Equals(b);
+        public static bool operator !=(Version a, Version b)
+        {
+            return !a.Equals(b);
+        }
 
         #endregion
     }

@@ -1,5 +1,5 @@
-using Bjerg.DataDragon;
 using System.Globalization;
+using Bjerg.DataDragon;
 
 namespace Bjerg.Lor
 {
@@ -14,7 +14,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdTerm ddRarity, TextInfo textInfo, out LorRarity? rarity)
         {
-            if (string.IsNullOrWhiteSpace(ddRarity.NameRef)  || ddRarity.Name is null)
+            if (string.IsNullOrWhiteSpace(ddRarity.NameRef) || ddRarity.Name is null)
             {
                 rarity = null;
                 return false;

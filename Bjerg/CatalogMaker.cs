@@ -234,15 +234,15 @@ namespace Bjerg
                     continue;
                 }
 
-                AddPropToCard(card, ddCard.RegionRef, "RegionRef", regions, (c, v) => c.Region = v);
-                AddPropToCard(card, ddCard.Supertype, "Supertype", supertypeDic, (c, v) => c.Supertype = v);
-                AddPropToCard(card, ddCard.Type, "Type", typeDic, (c, v) => c.Type = v);
-                AddPropToCard(card, ddCard.SpellSpeedRef, "SpellSpeedRef", spellSpeeds, (c, v) => c.SpellSpeed = v);
-                AddPropToCard(card, ddCard.Set, "Set", sets, (c, v) => c.Set = v);
-                AddPropToCard(card, ddCard.RarityRef, "RarityRef", rarities, (c, v) => c.Rarity = v);
+                AddPropToCard(card, ddCard.RegionRef,     "RegionRef",     regions,      (c, v) => c.Region = v);
+                AddPropToCard(card, ddCard.Supertype,     "Supertype",     supertypeDic, (c, v) => c.Supertype = v);
+                AddPropToCard(card, ddCard.Type,          "Type",          typeDic,      (c, v) => c.Type = v);
+                AddPropToCard(card, ddCard.SpellSpeedRef, "SpellSpeedRef", spellSpeeds,  (c, v) => c.SpellSpeed = v);
+                AddPropToCard(card, ddCard.Set,           "Set",           sets,         (c, v) => c.Set = v);
+                AddPropToCard(card, ddCard.RarityRef,     "RarityRef",     rarities,     (c, v) => c.Rarity = v);
 
-                AddPropListToCard(card, ddCard.Subtypes, "Subtype", subtypeDic, (c, vs) => c.Subtypes = vs);
-                AddPropListToCard(card, ddCard.KeywordRefs, "KeywordRef", keywords, (c, vs) => c.Keywords = vs);
+                AddPropListToCard(card, ddCard.Subtypes,    "Subtype",    subtypeDic, (c, vs) => c.Subtypes = vs);
+                AddPropListToCard(card, ddCard.KeywordRefs, "KeywordRef", keywords,   (c, vs) => c.Keywords = vs);
 
                 card.Cost = ddCard.Cost;
                 card.Attack = ddCard.Attack;
@@ -307,7 +307,7 @@ namespace Bjerg
                 Supertypes = supertypes,
                 Types = types,
                 Subtypes = subtypes,
-                Cards = cards
+                Cards = cards,
             };
         }
 

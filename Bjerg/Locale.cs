@@ -6,12 +6,12 @@ namespace Bjerg
     public class Locale : IEquatable<Locale>
     {
         /// <summary>
-        /// ISO-639-1 (always lower-case)
+        ///     ISO-639-1 (always lower-case)
         /// </summary>
         public string Language { get; }
 
         /// <summary>
-        /// ISO 3166-1 alpha-2 (always upper-case)
+        ///     ISO 3166-1 alpha-2 (always upper-case)
         /// </summary>
         public string Country { get; }
 
@@ -29,7 +29,7 @@ namespace Bjerg
             {
                 try
                 {
-                    return new CultureInfo(IsoName, useUserOverride: false);
+                    return new CultureInfo(IsoName, false);
                 }
                 catch (CultureNotFoundException)
                 {
@@ -56,18 +56,24 @@ namespace Bjerg
         public bool Equals(Locale? other)
         {
             return !(other is null)
-                && this.Language.Equals(other.Language)
-                && this.Country.Equals(other.Country);
+                   && Language.Equals(other.Language)
+                   && Country.Equals(other.Country);
         }
 
         public override bool Equals(object? obj)
         {
-            return obj is Locale other && this.Equals(other);
+            return obj is Locale other && Equals(other);
         }
 
-        public static bool operator ==(Locale a, Locale b) => a.Equals(b);
+        public static bool operator ==(Locale a, Locale b)
+        {
+            return a.Equals(b);
+        }
 
-        public static bool operator !=(Locale a, Locale b) => !a.Equals(b);
+        public static bool operator !=(Locale a, Locale b)
+        {
+            return !a.Equals(b);
+        }
 
         #endregion
     }

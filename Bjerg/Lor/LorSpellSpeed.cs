@@ -1,5 +1,5 @@
-using Bjerg.DataDragon;
 using System.Globalization;
+using Bjerg.DataDragon;
 
 namespace Bjerg.Lor
 {
@@ -14,7 +14,7 @@ namespace Bjerg.Lor
 
         internal static bool TryFromDataDragon(DdTerm ddSpellSpeed, TextInfo textInfo, out LorSpellSpeed? spellSpeed)
         {
-            if (string.IsNullOrWhiteSpace(ddSpellSpeed.NameRef)  || ddSpellSpeed.Name is null)
+            if (string.IsNullOrWhiteSpace(ddSpellSpeed.NameRef) || ddSpellSpeed.Name is null)
             {
                 spellSpeed = null;
                 return false;

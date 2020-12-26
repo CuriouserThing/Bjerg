@@ -7,15 +7,15 @@ namespace Bjerg.DeckCoding
 {
     public static class Coding
     {
-        private const int _currentFormat = 1;
+        private const int CurrentFormat = 1;
 
-        private const int _currentVersion = 2;
+        private const int CurrentVersion = 2;
 
-        private const int _maxVersion = 2;
+        private const int MaxVersion = 2;
 
-        private const int _maxCountGroup = 3; // 3x, 2x, 1x
+        private const int MaxCountGroup = 3; // 3x, 2x, 1x
 
-        private const byte _formatAndVersion = (_currentFormat << 4) & _currentVersion;
+        private const byte FormatAndVersion = (CurrentFormat << 4) & CurrentVersion;
 
         public static IReadOnlyList<RawCardAndCount> GetDeckCardsFromCode(string code)
         {
@@ -28,6 +28,7 @@ namespace Bjerg.DeckCoding
             {
                 throw new ArgumentException("Deck code isn't valid Base32. Can't decode.");
             }
+
             return GetDeckCardsFromCodeBytes(bytes);
         }
 
@@ -35,13 +36,13 @@ namespace Bjerg.DeckCoding
         {
             var span = new ReadOnlySpan<byte>(bytes);
 
-            _ = span[0] >> 4; // format (unused)
+            _ = span[0] >> 4;               // format (unused)
             int version = span[0] & 0b1111; // version
             span = span[1..];
 
-            if (version > _maxVersion)
+            if (version > MaxVersion)
             {
-                throw new ArgumentException($"Can't decode deck code of version {version}. This coder only recognizes a max version of {_maxVersion}.");
+                throw new ArgumentException($"Can't decode deck code of version {version}. This coder only recognizes a max version of {MaxVersion}.");
             }
 
             try
@@ -58,15 +59,15 @@ namespace Bjerg.DeckCoding
         {
             var cards = new List<RawCardAndCount>();
 
-            for (int c = _maxCountGroup; c > 0; c--) // card count
+            for (int c = MaxCountGroup; c > 0; c--) // card count
             {
                 int g = PopVarint(ref span); // # of set-faction groups in card count group
-                for (int i = 0; i < g; i++)
+                for (var i = 0; i < g; i++)
                 {
                     int h = PopVarint(ref span); // # of cards in set-faction group
                     int s = PopVarint(ref span); // card set
                     int f = PopVarint(ref span); // card faction
-                    for (int j = 0; j < h; j++)
+                    for (var j = 0; j < h; j++)
                     {
                         int n = PopVarint(ref span); // card number
                         cards.Add(new RawCardAndCount(s, f, n, c));
@@ -95,14 +96,15 @@ namespace Bjerg.DeckCoding
         private static byte[] GetCodeBytesFromDeckCards(IReadOnlyList<RawCardAndCount> cards)
         {
             // Group cards by their count; the zeroth group collects all cards above the max count-group threshold
-            var countGroups = new List<RawCardAndCount>[_maxCountGroup + 1];
-            for (int i = 0; i < countGroups.Length; i++)
+            var countGroups = new List<RawCardAndCount>[MaxCountGroup + 1];
+            for (var i = 0; i < countGroups.Length; i++)
             {
                 countGroups[i] = new List<RawCardAndCount>();
             }
+
             foreach (RawCardAndCount rcc in cards)
             {
-                if (rcc.Count > _maxCountGroup)
+                if (rcc.Count > MaxCountGroup)
                 {
                     countGroups[0].Add(rcc);
                 }
@@ -113,10 +115,10 @@ namespace Bjerg.DeckCoding
             }
 
             // Initialize bytes with format + version byte
-            var bytes = new List<byte> { _formatAndVersion };
+            var bytes = new List<byte> { FormatAndVersion };
 
             // Push the count-groups in descending order
-            for (int c = _maxCountGroup; c > 0; c--)
+            for (int c = MaxCountGroup; c > 0; c--)
             {
                 // Group cards by set + faction
                 RawCardAndCount[][] sfCardLists = countGroups[c]
@@ -129,6 +131,7 @@ namespace Bjerg.DeckCoding
                 {
                     Array.Sort(sfCards, CompareCards);
                 }
+
                 Array.Sort(sfCardLists, CompareCardLists);
 
                 // Push the card lists

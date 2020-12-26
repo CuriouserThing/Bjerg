@@ -3,7 +3,7 @@ namespace Bjerg.Lor
     public abstract class IndexedLorTerm : LorTerm
     {
         /// <summary>
-        /// A numeric index to this term. Consistent across all locales.
+        ///     A numeric index to this term. Consistent across all locales.
         /// </summary>
         /// <value></value>
         public int Index { get; }

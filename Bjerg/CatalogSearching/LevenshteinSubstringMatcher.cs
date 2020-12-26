@@ -25,7 +25,7 @@ namespace Bjerg.CatalogSearching
             Bookend = bookend;
             BookendTaper = bookendTaper;
 
-            DicCaches = new[] {new Dictionary<int, float[,]>(), new Dictionary<int, float[,]>()};
+            DicCaches = new[] { new Dictionary<int, float[,]>(), new Dictionary<int, float[,]>() };
         }
 
         public string Source { get; }
@@ -39,7 +39,7 @@ namespace Bjerg.CatalogSearching
         public float GetMatchPct(string target)
         {
             FindDistance(Source, target, Bookend, BookendTaper, out float distance, out float distanceMax);
-            return 1f - (distance / distanceMax);
+            return 1f - distance / distanceMax;
         }
 
         private void FindDistance(string source, string target, float bookend, float bookendTaper, out float distance, out float distanceMax)
@@ -76,7 +76,7 @@ namespace Bjerg.CatalogSearching
 
         private static void FillDistances(string source, string target, float bookend, float bookendTaper, float[,] d, float[,] w)
         {
-            for (int i = 0; i <= source.Length; i++)
+            for (var i = 0; i <= source.Length; i++)
             {
                 d[i, 0] = i;
                 w[i, 0] = 1f;
@@ -86,19 +86,19 @@ namespace Bjerg.CatalogSearching
             w[0, 0] = bookend;
             w[source.Length, 0] = bookend;
 
-            for (int j = 1; j <= target.Length; j++)
+            for (var j = 1; j <= target.Length; j++)
             {
                 float iw = w[0, j - 1];
                 d[0, j] = d[0, j - 1] + iw;
                 w[0, j] = iw * bookendTaper;
             }
 
-            for (int i = 1; i <= source.Length; i++)
+            for (var i = 1; i <= source.Length; i++)
             {
                 char ic = source[i - 1];
                 bool end = i == source.Length;
                 float wMult = end ? bookendTaper : 1f;
-                for (int j = 1; j <= target.Length; j++)
+                for (var j = 1; j <= target.Length; j++)
                 {
                     char jc = target[j - 1];
                     float ins = d[i, j - 1] + (end ? w[i, j - 1] : 1f);

@@ -38,7 +38,7 @@ namespace Bjerg
 
             var ccs = new CardAndCount[rccs.Count];
 
-            for (int i = 0; i < rccs.Count; i++)
+            for (var i = 0; i < rccs.Count; i++)
             {
                 RawCardAndCount rcc = rccs[i];
                 LorFaction? region = catalog.Regions.Values.SingleOrDefault(r => r.Index == rcc.Faction);
@@ -66,7 +66,6 @@ namespace Bjerg
                 }
 
                 ccs[i] = new CardAndCount(card, rcc.Count);
-                ;
             }
 
             deck = new Deck(code, catalog.Locale, catalog.Version, ccs);

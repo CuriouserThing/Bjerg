@@ -1,14 +1,14 @@
-using Bjerg.DataDragon;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using Bjerg.DataDragon;
 
 namespace Bjerg
 {
     public interface IDataDragonFetcher : IDisposable
     {
         /// <summary>
-        /// Fetch a Data Dragon globals DTO in a thread-safe manner.
+        ///     Fetch a Data Dragon globals DTO in a thread-safe manner.
         /// </summary>
         /// <param name="locale">The globals locale.</param>
         /// <param name="version">The globals version.</param>
@@ -16,7 +16,7 @@ namespace Bjerg
         Task<DdGlobals?> FetchGlobals(Locale locale, Version version);
 
         /// <summary>
-        /// Fetch an array of Data Dragon card DTOs for a particular set in a thread-safe manner.
+        ///     Fetch an array of Data Dragon card DTOs for a particular set in a thread-safe manner.
         /// </summary>
         /// <param name="locale">The cards' locale.</param>
         /// <param name="version">The cards' version.</param>

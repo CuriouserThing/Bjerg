@@ -6,18 +6,18 @@ namespace Bjerg.DeckCoding
 {
     internal static class Base32Helper
     {
-        private const string _alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
-        private const string _padding = "=";
-        private const int _mask = 0b11111;
-        private const int _shift = 5;
+        private const string Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567";
+        private const string Padding = "=";
+        private const int Mask = 0b11111;
+        private const int Shift = 5;
 
-        private static readonly Dictionary<char, int> _charMap = new Dictionary<char, int>();
+        private static readonly Dictionary<char, int> CharMap = new();
 
         static Base32Helper()
         {
-            for (int i = 0; i < _alphabet.Length; i++)
+            for (var i = 0; i < Alphabet.Length; i++)
             {
-                _charMap[_alphabet[i]] = i;
+                CharMap[Alphabet[i]] = i;
             }
         }
 
@@ -29,15 +29,15 @@ namespace Bjerg.DeckCoding
                 return string.Empty;
             }
 
-            int outLength = (data.Length * 8 + _shift - 1) / _shift;
+            int outLength = (data.Length * 8 + Shift - 1) / Shift;
             var result = new StringBuilder(outLength);
 
             int buffer = data[0];
-            int next = 1;
-            int left = 8;
+            var next = 1;
+            var left = 8;
             while (left > 0 || next < data.Length)
             {
-                if (left < _shift)
+                if (left < Shift)
                 {
                     if (next < data.Length)
                     {
@@ -47,14 +47,15 @@ namespace Bjerg.DeckCoding
                     }
                     else
                     {
-                        int pad = _shift - left;
+                        int pad = Shift - left;
                         buffer <<= pad;
                         left += pad;
                     }
                 }
-                int index = _mask & (buffer >> (left - _shift));
-                left -= _shift;
-                _ = result.Append(_alphabet[index]);
+
+                int index = Mask & (buffer >> (left - Shift));
+                left -= Shift;
+                _ = result.Append(Alphabet[index]);
             }
 
             return result.ToString();
@@ -63,7 +64,7 @@ namespace Bjerg.DeckCoding
         public static byte[] Decode(string encoded)
         {
             // Remove whitespace and padding
-            encoded = encoded.Trim().Replace(_padding, string.Empty);
+            encoded = encoded.Trim().Replace(Padding, string.Empty);
 
             // Return empty for empty
             if (encoded.Length == 0)
@@ -74,21 +75,22 @@ namespace Bjerg.DeckCoding
             // Canonicalize to upper
             encoded = encoded.ToUpper();
 
-            int outLength = encoded.Length * _shift / 8;
+            int outLength = encoded.Length * Shift / 8;
             byte[] result = new byte[outLength];
 
-            int buffer = 0;
-            int next = 0;
-            int left = 0;
+            var buffer = 0;
+            var next = 0;
+            var left = 0;
             foreach (char c in encoded)
             {
-                if (!_charMap.TryGetValue(c, out int n))
+                if (!CharMap.TryGetValue(c, out int n))
                 {
                     throw new ArgumentException($"Character {c} in encoded string isn't present in RFC 4648 Base32 alphabet. Can't decode.");
                 }
-                buffer <<= _shift;
-                buffer |= n & _mask;
-                left += _shift;
+
+                buffer <<= Shift;
+                buffer |= n & Mask;
+                left += Shift;
                 if (left >= 8)
                 {
                     result[next++] = (byte)(buffer >> (left - 8));
