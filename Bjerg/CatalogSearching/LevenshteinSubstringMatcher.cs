@@ -13,12 +13,12 @@ namespace Bjerg.CatalogSearching
         {
             if (bookend < 0f || bookend > 1f)
             {
-                throw new ArgumentException("", nameof(bookend));
+                throw new ArgumentOutOfRangeException(nameof(bookend));
             }
 
             if (bookendTaper < 0f || bookendTaper > 1f)
             {
-                throw new ArgumentException("", nameof(bookendTaper));
+                throw new ArgumentOutOfRangeException(nameof(bookendTaper));
             }
 
             Source = source;
@@ -130,12 +130,12 @@ namespace Bjerg.CatalogSearching
             {
                 if (bookend < 0f || bookend > 1f)
                 {
-                    throw new ArgumentException("", nameof(bookend));
+                    throw new ArgumentOutOfRangeException(nameof(bookend));
                 }
 
                 if (bookendTaper < 0f || bookendTaper > 1f)
                 {
-                    throw new ArgumentException("", nameof(bookendTaper));
+                    throw new ArgumentOutOfRangeException(nameof(bookendTaper));
                 }
 
                 Bookend = bookend;
