@@ -6,30 +6,36 @@ namespace Bjerg.CatalogSearching
 {
     public class CatalogItemSearcher<T> where T : class
     {
-        public CatalogItemSearcher(Catalog catalog, IItemGrouper<T, string> itemGrouper, IStringMatcherFactory stringMatcherFactory, IItemSelector<T> itemSelector, IItemMatchScaler<T> itemMatchScaler)
+        public CatalogItemSearcher(Catalog catalog, IItemGrouper<T, string> itemGrouper)
         {
             Catalog = catalog;
             ItemGrouper = itemGrouper;
-            StringMatcherFactory = stringMatcherFactory;
-            ItemSelector = itemSelector;
-            ItemMatchScaler = itemMatchScaler;
         }
 
         public Catalog Catalog { get; }
 
         public IItemGrouper<T, string> ItemGrouper { get; }
 
-        public IStringMatcherFactory StringMatcherFactory { get; }
+        /// <summary>
+        ///     Optional (by default, looks only for exact string matches).
+        /// </summary>
+        public IStringMatcherFactory StringMatcherFactory { get; init; } = new ExactStringMatcher.Factory();
 
-        public IItemSelector<T> ItemSelector { get; }
+        /// <summary>
+        ///     Optional (by default, passes the item(s) through unmodified).
+        /// </summary>
+        public IItemSelector<T> ItemSelector { get; init; } = new PassthroughItemSelector<T>();
 
-        public IItemMatchScaler<T> ItemMatchScaler { get; }
+        /// <summary>
+        ///     Optional (by default, passes the item match through unmodified).
+        /// </summary>
+        public IItemMatchScaler<T> ItemMatchScaler { get; init; } = new PassthroughItemMatchScaler<T>();
 
         /// <summary>
         ///     The absolute match pct threshold below which to reject all matches and above (or equal to) which to accept all
         ///     matches.
         /// </summary>
-        public float MatchThreshold { get; set; } = 0.5f;
+        public float MatchThreshold { get; init; } = 0.5f;
 
         public IReadOnlyList<ItemMatch<T>> Search(string lookup)
         {
