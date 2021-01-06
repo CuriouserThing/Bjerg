@@ -123,5 +123,33 @@ namespace Bjerg.CatalogSearching
                 }
             }
         }
+
+        public class Factory : IStringMatcherFactory
+        {
+            public Factory(float bookend, float bookendTaper)
+            {
+                if (bookend < 0f || bookend > 1f)
+                {
+                    throw new ArgumentException("", nameof(bookend));
+                }
+
+                if (bookendTaper < 0f || bookendTaper > 1f)
+                {
+                    throw new ArgumentException("", nameof(bookendTaper));
+                }
+
+                Bookend = bookend;
+                BookendTaper = bookendTaper;
+            }
+
+            public float Bookend { get; }
+
+            public float BookendTaper { get; }
+
+            public IStringMatcher CreateStringMatcher(string source)
+            {
+                return new LevenshteinSubstringMatcher(source, Bookend, BookendTaper);
+            }
+        }
     }
 }

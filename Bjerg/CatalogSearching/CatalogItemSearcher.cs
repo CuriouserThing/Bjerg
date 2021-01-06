@@ -6,7 +6,7 @@ namespace Bjerg.CatalogSearching
 {
     public class CatalogItemSearcher<T> where T : class
     {
-        public CatalogItemSearcher(Catalog catalog, IItemGrouper<T, string> itemGrouper, StringMatcherFactory stringMatcherFactory, IItemSelector<T> itemSelector, IItemMatchScaler<T> itemMatchScaler)
+        public CatalogItemSearcher(Catalog catalog, IItemGrouper<T, string> itemGrouper, IStringMatcherFactory stringMatcherFactory, IItemSelector<T> itemSelector, IItemMatchScaler<T> itemMatchScaler)
         {
             Catalog = catalog;
             ItemGrouper = itemGrouper;
@@ -19,7 +19,7 @@ namespace Bjerg.CatalogSearching
 
         public IItemGrouper<T, string> ItemGrouper { get; }
 
-        public StringMatcherFactory StringMatcherFactory { get; }
+        public IStringMatcherFactory StringMatcherFactory { get; }
 
         public IItemSelector<T> ItemSelector { get; }
 
