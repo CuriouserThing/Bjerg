@@ -9,7 +9,7 @@
 
         public string Source { get; }
 
-        public float GetMatchPct(string target)
+        public float GetMatchStrength(string target)
         {
             return string.Equals(Source, target) ? 1.0f : 0.0f;
         }

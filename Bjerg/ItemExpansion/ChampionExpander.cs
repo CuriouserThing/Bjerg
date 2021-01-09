@@ -1,14 +1,11 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
-namespace Bjerg.CatalogSearching
+namespace Bjerg.ItemExpansion
 {
-    /// <summary>
-    ///     A no-fuss, batteries-included card selector with criteria that may change from version to version.
-    /// </summary>
-    public class BasicCardSelector : IItemSelector<ICard>
+    public class ChampionExpander
     {
-        public BasicCardSelector(Catalog localCatalog, Catalog homeCatalog)
+        public ChampionExpander(Catalog localCatalog, Catalog homeCatalog)
         {
             LocalCatalog = localCatalog;
             HomeCatalog = homeCatalog;
@@ -17,16 +14,6 @@ namespace Bjerg.CatalogSearching
         public Catalog LocalCatalog { get; }
 
         public Catalog HomeCatalog { get; }
-
-        public IReadOnlyList<ICard> Reduce(IEnumerable<ICard> cards)
-        {
-            return cards
-                .OrderByDescending(c => c.Collectible) // favor collectibles
-                .ThenBy(c => c.Code.TNumber)           // favor "root" cards without a T number (0)
-                .ThenBy(c => c.Code)                   // simple non-arbitrary tiebreaker
-                .Take(1)
-                .ToArray();
-        }
 
         public IReadOnlyList<ICard> Expand(ICard card)
         {
@@ -43,7 +30,7 @@ namespace Bjerg.CatalogSearching
             }
         }
 
-        private IReadOnlyList<ICard> ExpandChamp(ICard card, Catalog localCatalog, Catalog homeCatalog)
+        private static IReadOnlyList<ICard> ExpandChamp(ICard card, Catalog localCatalog, Catalog homeCatalog)
         {
             // The potential lv. 2 champs for this card are cards that share its code (sans T number)
             CardCode bc = card.Code;

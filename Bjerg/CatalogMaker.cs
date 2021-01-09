@@ -13,7 +13,7 @@ namespace Bjerg
         public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, IReadOnlyDictionary<string, int> regionIndices, IReadOnlyDictionary<string, int> setIndices, ILogger logger)
         {
             Locale = locale;
-            TextInfo = locale.CultureInfo.TextInfo;
+            TextInfo = locale.GetCultureInfo().TextInfo;
             Version = version;
             Globals = globals;
             DdCards = ddCards;

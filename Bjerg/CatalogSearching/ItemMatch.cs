@@ -1,23 +1,24 @@
-﻿using System.Collections.Generic;
-
-namespace Bjerg.CatalogSearching
+﻿namespace Bjerg.CatalogSearching
 {
     public class ItemMatch<T>
     {
-        public ItemMatch(string matchKey, float matchPct, T item, IReadOnlyList<T> itemExpansion)
+        public ItemMatch(string key, float keyStrength, T item, float itemStrengthMultiplier, float matchStrength)
         {
-            MatchKey = matchKey;
-            MatchPct = matchPct;
+            Key = key;
+            KeyStrength = keyStrength;
             Item = item;
-            ItemExpansion = itemExpansion;
+            ItemStrengthMultiplier = itemStrengthMultiplier;
+            MatchStrength = matchStrength;
         }
 
-        public string MatchKey { get; }
+        public string Key { get; }
 
-        public float MatchPct { get; }
+        public float KeyStrength { get; }
 
         public T Item { get; }
 
-        public IReadOnlyList<T> ItemExpansion { get; }
+        public float ItemStrengthMultiplier { get; }
+
+        public float MatchStrength { get; }
     }
 }

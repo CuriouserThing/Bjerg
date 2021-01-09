@@ -7,9 +7,14 @@ namespace Bjerg.CatalogSearching
     public class KeywordNameGrouper : IItemGrouper<LorKeyword, string>
     {
         /// <summary>
-        ///     Whether or not include vocab terms (e.g. Allegiance) disguised as keywords.
+        ///     Whether or not to include vocab terms (e.g. Allegiance) disguised as keywords.
         /// </summary>
         public bool IncludeVocabTerms { get; init; } = false;
+
+        /// <summary>
+        ///     Whether or not to include keywords with empty or whitespace <see cref="LorKeyword.Description" /> values.
+        /// </summary>
+        public bool IncludeDescriptionlessKeywords { get; init; } = false;
 
         public IEnumerable<LorKeyword> SelectAllItems(Catalog catalog)
         {
@@ -20,12 +25,15 @@ namespace Bjerg.CatalogSearching
                 IEnumerable<LorKeyword> vocabTerms = catalog.VocabTerms.Values
                     .Select(vt => new LorKeyword(vt.Key, vt.Name, vt.Description));
 
-                return keywords.Concat(vocabTerms);
+                keywords = keywords.Concat(vocabTerms);
             }
-            else
+
+            if (!IncludeDescriptionlessKeywords)
             {
-                return keywords;
+                keywords = keywords.Where(k => !string.IsNullOrWhiteSpace(k.Description));
             }
+
+            return keywords;
         }
 
         public string SelectItemKey(LorKeyword item)

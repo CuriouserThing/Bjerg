@@ -23,19 +23,16 @@ namespace Bjerg
 
         private string IsoName => $"{Language}-{Country}";
 
-        public CultureInfo CultureInfo
+        public CultureInfo GetCultureInfo()
         {
-            get
+            try
             {
-                try
-                {
-                    return new CultureInfo(IsoName, false);
-                }
-                catch (CultureNotFoundException)
-                {
-                    // Fallback on an English-like culture with no fuss
-                    return CultureInfo.InvariantCulture;
-                }
+                return new CultureInfo(IsoName, false);
+            }
+            catch (CultureNotFoundException)
+            {
+                // Fallback on an English-like culture with no fuss
+                return CultureInfo.InvariantCulture;
             }
         }
 

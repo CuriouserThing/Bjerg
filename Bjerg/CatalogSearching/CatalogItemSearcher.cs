@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
@@ -6,73 +7,91 @@ namespace Bjerg.CatalogSearching
 {
     public class CatalogItemSearcher<T> where T : class
     {
+        private readonly CultureInfo _cultureInfo;
+
         public CatalogItemSearcher(Catalog catalog, IItemGrouper<T, string> itemGrouper)
         {
             Catalog = catalog;
             ItemGrouper = itemGrouper;
+
+            _cultureInfo = Catalog.Locale.GetCultureInfo();
         }
 
         public Catalog Catalog { get; }
 
         public IItemGrouper<T, string> ItemGrouper { get; }
 
-        /// <summary>
-        ///     Optional (by default, looks only for exact string matches).
-        /// </summary>
-        public IStringMatcherFactory StringMatcherFactory { get; init; } = new ExactStringMatcher.Factory();
+        public IStringCanonicalizer TermTargetCanonicalizer { get; init; } = new TrimmedAndLowerCanonicalizer();
 
-        /// <summary>
-        ///     Optional (by default, passes the item(s) through unmodified).
-        /// </summary>
-        public IItemSelector<T> ItemSelector { get; init; } = new PassthroughItemSelector<T>();
+        public IStringMatcherFactory TermMatcherFactory { get; init; } = new ExactStringMatcher.Factory();
 
-        /// <summary>
-        ///     Optional (by default, passes the item match through unmodified).
-        /// </summary>
-        public IItemMatchScaler<T> ItemMatchScaler { get; init; } = new PassthroughItemMatchScaler<T>();
+        public float KeyStrengthThreshold { get; init; } = 0.5f;
 
-        /// <summary>
-        ///     The absolute match pct threshold below which to reject all matches and above (or equal to) which to accept all
-        ///     matches.
-        /// </summary>
-        public float MatchThreshold { get; init; } = 0.5f;
+        public KeyConflictResolution KeyConflictResolution { get; init; } = KeyConflictResolution.Flattened;
 
-        public IReadOnlyList<ItemMatch<T>> Search(string lookup)
+        public IMatchGroupResolver<T> MatchGroupResolver { get; init; } = new PassthroughMatchGroupResolver<T>();
+
+        public IReadOnlyList<IItemStrengthDownscaler<T>> ItemStrengthDownscalers { get; init; } = Array.Empty<IItemStrengthDownscaler<T>>();
+
+        public ItemDownscaleCurve ItemDownscaleCurve { get; init; } = ItemDownscaleCurve.Biased;
+
+        public SearchResult<T> Search(string term)
         {
-            CultureInfo cultureInfo = Catalog.Locale.CultureInfo;
-            lookup = lookup.ToLower(cultureInfo);
-            IStringMatcher matcher = StringMatcherFactory.CreateStringMatcher(lookup);
+            term = TermTargetCanonicalizer.Canonicalize(term, _cultureInfo);
+            IStringMatcher matcher = TermMatcherFactory.CreateStringMatcher(term);
             var matches = new List<ItemMatch<T>>();
 
-            foreach (IGrouping<string, T> itemGroup in ItemGrouper.SelectAllItems(Catalog)
-                .GroupBy(ItemGrouper.SelectItemKey))
+            foreach (IGrouping<string, T> itemGroup in ItemGrouper.SelectAllItems(Catalog).GroupBy(SelectItemKey))
             {
-                string name = itemGroup.Key.ToLower(cultureInfo);
-                float m = matcher.GetMatchPct(name);
-                if (m < MatchThreshold) { continue; }
+                string key = itemGroup.Key;
+                float keyStrength = matcher.GetMatchStrength(key);
+                if (keyStrength < KeyStrengthThreshold) { continue; }
 
-                IReadOnlyList<T> items = ItemSelector.Reduce(itemGroup);
-                if (items.Count == 0) { continue; }
+                T[] items = itemGroup.ToArray();
+                if (items.Length > 1)
+                {
+                    if (KeyConflictResolution == KeyConflictResolution.Separated)
+                    {
+                        items = MatchGroupResolver.OrderMatchItems(items, key, keyStrength).ToArray();
+                    }
+                    else
+                    {
+                        items = new[] { MatchGroupResolver.FlattenMatchItems(items, key, keyStrength) };
+                    }
+                }
 
-                // If there are multiple conflicting (i.e. same-key) items remaining after reduction, join them into one single match, with the highest scaled match pct taking front billing.
-                (float, T)[] itemsSorted = items
-                    .Select(t => (ItemMatchScaler.ScaleMatchPct(t, m), t))
-                    .OrderByDescending(tm => tm.Item1)
-                    .ToArray();
-                IReadOnlyList<T> expansion = itemsSorted
-                    .SelectMany(tm => ItemSelector.Expand(tm.Item2))
-                    .ToArray();
-                matches.Add(new ItemMatch<T>(name, itemsSorted[0].Item1, itemsSorted[0].Item2, expansion));
+                foreach (T item in items)
+                {
+                    var m = 1f;
+                    foreach (var downscaler in ItemStrengthDownscalers)
+                    {
+                        m *= downscaler.GetMultiplier(item);
+                    }
+
+                    if (ItemDownscaleCurve == ItemDownscaleCurve.Biased)
+                    {
+                        m = (float)Math.Pow(m, 1 - keyStrength);
+                    }
+
+                    float matchStrength = keyStrength * m;
+                    matches.Add(new ItemMatch<T>(key, keyStrength, item, m, matchStrength));
+                }
             }
 
             matches.Sort(CompareDescending);
-            return matches;
+            return new SearchResult<T>(term, matches);
+        }
+
+        private string SelectItemKey(T item)
+        {
+            string key = ItemGrouper.SelectItemKey(item);
+            return TermTargetCanonicalizer.Canonicalize(key, _cultureInfo);
         }
 
         private static int CompareDescending(ItemMatch<T> x, ItemMatch<T> y)
         {
-            float mx = x.MatchPct;
-            float my = y.MatchPct;
+            float mx = x.MatchStrength;
+            float my = y.MatchStrength;
             if (mx < my)
             {
                 return +1;

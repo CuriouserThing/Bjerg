@@ -36,7 +36,7 @@ namespace Bjerg.CatalogSearching
 
         private Dictionary<int, float[,]>[] DicCaches { get; }
 
-        public float GetMatchPct(string target)
+        public float GetMatchStrength(string target)
         {
             FindDistance(Source, target, Bookend, BookendTaper, out float distance, out float distanceMax);
             return 1f - distance / distanceMax;
