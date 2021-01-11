@@ -10,15 +10,15 @@ namespace Bjerg
         /// </summary>
         /// <param name="locale">The catalog's locale.</param>
         /// <param name="version">The catalog's version.</param>
-        /// <returns>A comprehensive catalog. If non-null, the function succeeded. If null, the function failed.</returns>
-        Task<Catalog?> GetCatalog(Locale locale, Version version);
+        /// <returns>A comprehensive catalog.</returns>
+        Task<Catalog> GetCatalog(Locale locale, Version version);
 
         /// <summary>
-        ///     Fetch or create a catalog for a default locale in a thread-safe manner.
+        ///     Fetch or create a catalog for the home locale en-US in a thread-safe manner.
         /// </summary>
         /// <param name="version">The catalog's version.</param>
-        /// <returns>A comprehensive catalog. If non-null, the function succeeded. If null, the function failed.</returns>
-        async Task<Catalog?> GetHomeCatalog(Version version)
+        /// <returns>A comprehensive catalog.</returns>
+        async Task<Catalog> GetHomeCatalog(Version version)
         {
             return await GetCatalog(Locale.Home, version);
         }

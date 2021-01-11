@@ -42,7 +42,7 @@ namespace Bjerg
             ["Targon"] = 9,
         };
 
-        public async Task<Catalog?> GetCatalog(Locale locale, Version version)
+        public async Task<Catalog> GetCatalog(Locale locale, Version version)
         {
             lock (_syncRoot)
             {
@@ -55,8 +55,7 @@ namespace Bjerg
             DdGlobals? globals = await DdFetcher.FetchGlobals(locale, version);
             if (globals is null)
             {
-                Logger.LogError("Couldn't fetch Data Dragon globals. Therefore, can't create a catalog.");
-                return null;
+                throw new InvalidOperationException("Couldn't fetch Data Dragon globals. Therefore, can't create a catalog.");
             }
 
             if (globals.Sets is null)
@@ -65,8 +64,7 @@ namespace Bjerg
                 globals.Sets = await GetSetsAsync(locale, version);
                 if (globals.Sets is null)
                 {
-                    Logger.LogError("Couldn't patch in a set array. Therefore, can't create a catalog.");
-                    return null;
+                    throw new InvalidOperationException("Couldn't patch in a set array. Therefore, can't create a catalog.");
                 }
             }
 
@@ -83,8 +81,7 @@ namespace Bjerg
                 IReadOnlyList<DdCard>? setCardList = setCardLists[i];
                 if (setCardList is null)
                 {
-                    Logger.LogError($"Couldn't fetch Data Dragon cards for set number {s}. Therefore, can't create a catalog.");
-                    return null;
+                    throw new InvalidOperationException($"Couldn't fetch Data Dragon cards for set number {s}. Therefore, can't create a catalog.");
                 }
 
                 string nameRef = $"Set{s}";
@@ -118,17 +115,19 @@ namespace Bjerg
                 return null;
             }
 
-            Catalog? setsCatalog;
+            Catalog setsCatalog;
             using (Logger.BeginScope(locale))
             using (Logger.BeginScope(version))
             {
-                setsCatalog = await GetCatalog(locale, FirstSetDtoVersion);
-            }
-
-            if (setsCatalog is null)
-            {
-                Logger.LogError($"Couldn't get a catalog for version {FirstSetDtoVersion}, when Riot introduced set DTOs. Therefore, can't find a catalog with sets to reference for version {version}.");
-                return null;
+                try
+                {
+                    setsCatalog = await GetCatalog(locale, FirstSetDtoVersion);
+                }
+                catch
+                {
+                    Logger.LogError($"Couldn't get a catalog for version {FirstSetDtoVersion}, when Riot introduced set DTOs. Therefore, can't find a catalog with sets to reference for version {version}.");
+                    return null;
+                }
             }
 
             int setCount;
