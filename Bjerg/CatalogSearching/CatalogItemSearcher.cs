@@ -21,7 +21,7 @@ namespace Bjerg.CatalogSearching
 
         public IItemGrouper<T, string> ItemGrouper { get; }
 
-        public IStringCanonicalizer TermTargetCanonicalizer { get; init; } = new TrimmedAndLowerCanonicalizer();
+        public IStringCanonicalizer TermTargetCanonicalizer { get; init; } = new PassthroughCanonicalizer();
 
         public IStringMatcherFactory TermMatcherFactory { get; init; } = new ExactStringMatcher.Factory();
 
@@ -33,7 +33,9 @@ namespace Bjerg.CatalogSearching
 
         public IReadOnlyList<IItemStrengthDownscaler<T>> ItemStrengthDownscalers { get; init; } = Array.Empty<IItemStrengthDownscaler<T>>();
 
-        public ItemDownscaleCurve ItemDownscaleCurve { get; init; } = ItemDownscaleCurve.Biased;
+        public ItemDownscaleCurve ItemDownscaleCurve { get; init; } = ItemDownscaleCurve.Linear;
+
+        public IItemMatchSorter<T> ItemMatchSorter { get; init; } = new PassthroughItemMatchSorter<T>();
 
         public SearchResult<T> Search(string term)
         {
@@ -78,7 +80,11 @@ namespace Bjerg.CatalogSearching
                 }
             }
 
-            matches.Sort(CompareDescending);
+            if (ItemMatchSorter.ShouldSortMatches(matches))
+            {
+                matches.Sort(ItemMatchSorter.Compare);
+            }
+
             return new SearchResult<T>(term, matches);
         }
 
@@ -86,24 +92,6 @@ namespace Bjerg.CatalogSearching
         {
             string key = ItemGrouper.SelectItemKey(item);
             return TermTargetCanonicalizer.Canonicalize(key, _cultureInfo);
-        }
-
-        private static int CompareDescending(ItemMatch<T> x, ItemMatch<T> y)
-        {
-            float mx = x.MatchStrength;
-            float my = y.MatchStrength;
-            if (mx < my)
-            {
-                return +1;
-            }
-            else if (mx > my)
-            {
-                return -1;
-            }
-            else
-            {
-                return 0;
-            }
         }
     }
 }
