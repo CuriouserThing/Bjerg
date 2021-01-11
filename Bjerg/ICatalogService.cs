@@ -18,6 +18,9 @@ namespace Bjerg
         /// </summary>
         /// <param name="version">The catalog's version.</param>
         /// <returns>A comprehensive catalog. If non-null, the function succeeded. If null, the function failed.</returns>
-        Task<Catalog?> GetHomeCatalog(Version version);
+        async Task<Catalog?> GetHomeCatalog(Version version)
+        {
+            return await GetCatalog(Locale.Home, version);
+        }
     }
 }

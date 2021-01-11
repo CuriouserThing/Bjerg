@@ -23,6 +23,8 @@ namespace Bjerg
 
         private string IsoName => $"{Language}-{Country}";
 
+        public static Locale Home => new("en", "US");
+
         public CultureInfo GetCultureInfo()
         {
             try

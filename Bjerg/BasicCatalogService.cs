@@ -10,7 +10,6 @@ namespace Bjerg
 {
     public class BasicCatalogService : ICatalogService
     {
-        private static readonly Locale HomeLocale = new("en", "US");
         private readonly object _syncRoot = new();
 
         public BasicCatalogService(IDataDragonFetcher ddFetcher, ILogger<BasicCatalogService> logger)
@@ -109,11 +108,6 @@ namespace Bjerg
 
                 return cat;
             }
-        }
-
-        public async Task<Catalog?> GetHomeCatalog(Version version)
-        {
-            return await GetCatalog(HomeLocale, version);
         }
 
         private async Task<DdSet[]?> GetSetsAsync(Locale locale, Version version)
