@@ -3,21 +3,19 @@ using System.Collections.Generic;
 
 namespace Bjerg.CatalogSearching
 {
-    public class SearchResult<T>
+    public class SearchResult<T> where T : class
     {
-        public SearchResult(string lookup, IReadOnlyList<ItemMatch<T>> matches)
+        public SearchResult(string searchTerm, Catalog searchCatalog, IReadOnlyList<ItemMatch<T>>? matches = null)
         {
-            Lookup = lookup;
-            Matches = matches;
+            SearchTerm = searchTerm;
+            SearchCatalog = searchCatalog;
+            Matches = matches ?? Array.Empty<ItemMatch<T>>();
         }
 
-        public string Lookup { get; }
+        public string SearchTerm { get; }
+
+        public Catalog SearchCatalog { get; }
 
         public IReadOnlyList<ItemMatch<T>> Matches { get; }
-
-        public static SearchResult<T> FromFailure(string lookup)
-        {
-            return new(lookup, Array.Empty<ItemMatch<T>>());
-        }
     }
 }

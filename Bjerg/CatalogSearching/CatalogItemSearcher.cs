@@ -85,7 +85,7 @@ namespace Bjerg.CatalogSearching
                 matches.Sort(ItemMatchSorter.Compare);
             }
 
-            return new SearchResult<T>(term, matches);
+            return new SearchResult<T>(term, Catalog, matches);
         }
 
         private string SelectItemKey(T item)
