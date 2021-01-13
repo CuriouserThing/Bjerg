@@ -20,5 +20,11 @@ namespace Bjerg.CatalogSearching
         public Version SearchVersion { get; }
 
         public IReadOnlyList<ItemMatch<T>> Matches { get; }
+
+        public static SearchResult<T> FromSingleItem(string term, Locale locale, Version version, T item)
+        {
+            var match = new ItemMatch<T>(term, 1f, item, 1f, 1f);
+            return new SearchResult<T>(term, locale, version, new[] { match });
+        }
     }
 }
