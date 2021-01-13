@@ -1,6 +1,8 @@
+using System;
+
 namespace Bjerg
 {
-    public class CardCode
+    public class CardCode : IEquatable<CardCode>, IComparable<CardCode>
     {
         private readonly string _code;
 
@@ -21,6 +23,11 @@ namespace Bjerg
 
         // ReSharper disable once InconsistentNaming
         public int TNumber { get; }
+
+        public int CompareTo(CardCode? other)
+        {
+            return string.Compare(_code, other?._code, StringComparison.Ordinal);
+        }
 
         public static bool TryFromString(string code, out CardCode? outCode)
         {
@@ -80,5 +87,36 @@ namespace Bjerg
         {
             return code.ToString();
         }
+
+        #region Equality
+
+        public override int GetHashCode()
+        {
+            return Hasher.Start
+                .HashNullable(_code);
+        }
+
+        public bool Equals(CardCode? other)
+        {
+            return !(other is null)
+                   && _code.Equals(other._code);
+        }
+
+        public override bool Equals(object? obj)
+        {
+            return obj is CardCode other && Equals(other);
+        }
+
+        public static bool operator ==(CardCode a, CardCode b)
+        {
+            return a.Equals(b);
+        }
+
+        public static bool operator !=(CardCode a, CardCode b)
+        {
+            return !a.Equals(b);
+        }
+
+        #endregion
     }
 }
