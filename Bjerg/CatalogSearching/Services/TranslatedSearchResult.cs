@@ -53,6 +53,23 @@ namespace Bjerg.CatalogSearching.Services
                 original.MatchStrength);
         }
 
+        private static TranslatedSearchResult<CatalogItemUnion> FromBaseResult<TItem>(
+            IReadOnlyList<ItemMatch<CatalogItemUnion>>              matches,
+            IReadOnlyDictionary<CatalogItemUnion, CatalogItemUnion> translationMap,
+            TranslatedSearchResult<TItem>                           baseResult)
+            where TItem : class
+        {
+            var result = new SearchResult<CatalogItemUnion>(
+                baseResult.SearchTerm,
+                baseResult.SearchLocale,
+                baseResult.SearchVersion,
+                matches);
+            return new TranslatedSearchResult<CatalogItemUnion>(
+                result,
+                baseResult.TranslationLocale,
+                translationMap);
+        }
+
         public static TranslatedSearchResult<CatalogItemUnion> MergeSearchResults
         (
             TranslatedSearchResult<ICard>      cardResult,
@@ -91,20 +108,24 @@ namespace Bjerg.CatalogSearching.Services
                 }
             }
 
+            if (matches.Count == 0)
+            {
+                return FromBaseResult(matches, map, cardResult);
+            }
+
             if (sorter.ShouldSortMatches(matches))
             {
                 matches.Sort(sorter.Compare);
             }
 
-            var result = new SearchResult<CatalogItemUnion>(
-                cardResult.SearchTerm,
-                cardResult.SearchLocale,
-                cardResult.SearchVersion,
-                matches);
-            return new TranslatedSearchResult<CatalogItemUnion>(
-                result,
-                cardResult.TranslationLocale,
-                map);
+            // Use fields from whichever type provided the best match
+            return matches[0].Item.T switch
+            {
+                CatalogItemUnion.Type.Card    => FromBaseResult(matches, map, cardResult),
+                CatalogItemUnion.Type.Keyword => FromBaseResult(matches, map, keywordResult),
+                CatalogItemUnion.Type.Deck    => FromBaseResult(matches, map, deckResult),
+                _                             => FromBaseResult(matches, map, cardResult),
+            };
         }
     }
 }
