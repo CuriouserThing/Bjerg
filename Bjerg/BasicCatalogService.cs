@@ -28,6 +28,8 @@ namespace Bjerg
 
         private static Version Set3ReleaseVersion { get; } = new(1, 8, 0);
 
+        private static Version Set4ReleaseVersion { get; } = new(2, 3, 0);
+
         private static Version FirstSetDtoVersion { get; } = new(1, 8, 0);
 
         private static Dictionary<string, int> RegionIndices { get; } = new()
@@ -39,6 +41,7 @@ namespace Bjerg
             ["PiltoverZaun"] = 4,
             ["ShadowIsles"] = 5,
             ["Bilgewater"] = 6,
+            ["Shurima"] = 7,
             ["Targon"] = 9,
         };
 
@@ -56,6 +59,30 @@ namespace Bjerg
             if (globals is null)
             {
                 throw new InvalidOperationException("Couldn't fetch Data Dragon globals. Therefore, can't create a catalog.");
+            }
+
+            if (!version.IsEarlierThan(Set4ReleaseVersion))
+            {
+                globals.Regions = globals.Regions?.Concat(new[]
+                {
+                    new DdRegion
+                    {
+                        Abbreviation = "SH",
+                        IconAbsolutePath = "https://universe.leagueoflegends.com/images/shurima_crest_icon.png",
+                        Name = "Shurima",
+                        NameRef = "Shurima",
+                    },
+                }).ToArray();
+
+                globals.Sets = globals.Sets?.Concat(new[]
+                {
+                    new DdSet
+                    {
+                        IconAbsolutePath = "https://universe.leagueoflegends.com/images/shurima_crest_icon.png",
+                        Name = "Empires of the Ascended",
+                        NameRef = "Set4",
+                    },
+                }).ToArray();
             }
 
             if (globals.Sets is null)
