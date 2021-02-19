@@ -39,6 +39,7 @@ namespace Bjerg
             ["PiltoverZaun"] = 4,
             ["ShadowIsles"] = 5,
             ["Bilgewater"] = 6,
+            ["Shurima"] = 7,
             ["Targon"] = 9,
         };
 
