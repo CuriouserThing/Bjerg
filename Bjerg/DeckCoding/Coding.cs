@@ -9,9 +9,9 @@ namespace Bjerg.DeckCoding
     {
         private const int CurrentFormat = 1;
 
-        private const int CurrentVersion = 2;
+        private const int CurrentVersion = 3;
 
-        private const int MaxVersion = 2;
+        private const int MaxVersion = 3;
 
         private const int MaxCountGroup = 3; // 3x, 2x, 1x
 
