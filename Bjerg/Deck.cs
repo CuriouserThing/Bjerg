@@ -72,6 +72,17 @@ namespace Bjerg
             return true;
         }
 
+        public IReadOnlyList<LorFaction> GetFactions()
+        {
+            return Cards
+                .Select(cc => cc.Card.Region)
+                .Distinct()
+                .Where(f => f is not null)
+                .Select(f => f!)
+                .OrderBy(f => f.Index)
+                .ToArray();
+        }
+
         public override string ToString()
         {
             return Code;
