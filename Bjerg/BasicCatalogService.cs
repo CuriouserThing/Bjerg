@@ -70,28 +70,48 @@ namespace Bjerg
                 }
             }
 
-            int setCount = globals.Sets.Length;
-            Task<IReadOnlyList<DdCard>?>[] setCardTasks = globals.Sets
-                .Select(s => DdFetcher.FetchSetCards(locale, version, s))
-                .ToArray();
-            IReadOnlyList<DdCard>?[] setCardLists = await Task.WhenAll(setCardTasks);
             var setIndices = new Dictionary<string, int>();
             var cards = new List<DdCard>();
-            for (var i = 0; i < setCount; i++)
+            foreach (var set in globals.Sets)
             {
-                int s = i + 1;
-                IReadOnlyList<DdCard>? setCardList = setCardLists[i];
-                if (setCardList is null)
+                int? setNumber;
+                if (set.NameRef is not null &&
+                    set.NameRef.StartsWith("Set") &&
+                    int.TryParse(set.NameRef.Substring(3), out int s))
                 {
-                    throw new InvalidOperationException($"Couldn't fetch Data Dragon cards for set number {s}. Therefore, can't create a catalog.");
+                    setNumber = s;
+                }
+                else
+                {
+                    setNumber = null;
                 }
 
-                string nameRef = $"Set{s}";
-                setIndices.Add(nameRef, s);
-                foreach (DdCard card in setCardList)
+                if (setNumber.HasValue)
                 {
-                    card.Set = nameRef; // we may or may not need to patch in the set name -- do it regardless
-                    cards.Add(card);
+                    setIndices.Add(set.NameRef!, setNumber.Value);
+                }
+
+                IReadOnlyList<DdCard>? setCardList = await DdFetcher.FetchSetCards(locale, version, set);
+                if (setCardList is null)
+                {
+                    // There may be "special" sets listed in the manifest that we don't "care" about (e.g. "EventSet").
+                    // It's only an exception if we can't fetch cards for a normal, numbered set.
+                    if (setNumber is not null)
+                    {
+                        throw new InvalidOperationException($"Couldn't fetch Data Dragon cards for {set.NameRef}. Therefore, can't create a catalog.");
+                    }
+                    else
+                    {
+                        Logger.LogInformation($"Couldn't fetch Data Dragon cards for {set.NameRef}.");
+                    }
+                }
+                else
+                {
+                    foreach (DdCard card in setCardList)
+                    {
+                        card.Set = set.NameRef; // we may or may not need to patch in the set name -- do it regardless
+                        cards.Add(card);
+                    }
                 }
             }
 
