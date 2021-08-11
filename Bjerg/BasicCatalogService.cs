@@ -70,6 +70,14 @@ namespace Bjerg
                 }
             }
 
+            // Shim to add set 5 during spoiler season.
+            globals.Sets = globals.Sets.Append(new DdSet
+            {
+                IconAbsolutePath = "http://dd.b.pvp.net/2_14_0/core/en_us/img/sets/set4.png", // en-US only
+                Name    = "Beyond the BandleWood", // en-US only
+                NameRef = "Set5",
+            }).ToArray();
+
             var setIndices = new Dictionary<string, int>();
             var cards = new List<DdCard>();
             foreach (var set in globals.Sets)
