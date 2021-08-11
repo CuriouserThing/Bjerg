@@ -70,12 +70,21 @@ namespace Bjerg
                 }
             }
 
+            // Shim to add Bandle City during spoiler season.
+            globals.Regions = globals.Regions!.Append(new DdRegion
+            {
+                Name = "Bandle City", // en-US only
+                NameRef = "BandleCity",
+                Abbreviation = "BC",
+                IconAbsolutePath = "https://dd.b.pvp.net/2_14_0/core/en_us/img/regions/icon-bandlecity.png", // en-US only
+            }).ToArray();
+
             // Shim to add set 5 during spoiler season.
             globals.Sets = globals.Sets.Append(new DdSet
             {
-                IconAbsolutePath = "http://dd.b.pvp.net/2_14_0/core/en_us/img/sets/set4.png", // en-US only
                 Name    = "Beyond the BandleWood", // en-US only
                 NameRef = "Set5",
+                IconAbsolutePath = "http://dd.b.pvp.net/2_14_0/core/en_us/img/sets/set4.png", // en-US only
             }).ToArray();
 
             var setIndices = new Dictionary<string, int>();
