@@ -75,6 +75,7 @@ namespace Bjerg
         public IReadOnlyList<LorFaction> GetFactions()
         {
             return Cards
+                .Where(cc => cc.Card.Regions is null || cc.Card.Regions.Count < 2)
                 .Select(cc => cc.Card.Region)
                 .Distinct()
                 .Where(f => f is not null)
