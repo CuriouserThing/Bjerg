@@ -12,14 +12,14 @@ namespace Bjerg
     {
         public CatalogMaker(Locale locale, Version version, DdGlobals globals, IReadOnlyList<DdCard> ddCards, IReadOnlyDictionary<string, int> regionIndices, IReadOnlyDictionary<string, int> setIndices, ILogger logger)
         {
-            Locale = locale;
-            TextInfo = locale.GetCultureInfo().TextInfo;
-            Version = version;
-            Globals = globals;
-            DdCards = ddCards;
+            Locale        = locale;
+            TextInfo      = locale.GetCultureInfo().TextInfo;
+            Version       = version;
+            Globals       = globals;
+            DdCards       = ddCards;
             RegionIndices = regionIndices;
-            SetIndices = setIndices;
-            Logger = logger;
+            SetIndices    = setIndices;
+            Logger        = logger;
         }
 
         private Locale Locale { get; }
@@ -234,26 +234,27 @@ namespace Bjerg
                     continue;
                 }
 
-                AddPropToCard(card, ddCard.RegionRef,     "RegionRef",     regions,      (c, v) => c.Region = v);
-                AddPropToCard(card, ddCard.Supertype,     "Supertype",     supertypeDic, (c, v) => c.Supertype = v);
-                AddPropToCard(card, ddCard.Type,          "Type",          typeDic,      (c, v) => c.Type = v);
+                AddPropToCard(card, ddCard.RegionRef,     "RegionRef",     regions,      (c, v) => c.Region     = v);
+                AddPropToCard(card, ddCard.Supertype,     "Supertype",     supertypeDic, (c, v) => c.Supertype  = v);
+                AddPropToCard(card, ddCard.Type,          "Type",          typeDic,      (c, v) => c.Type       = v);
                 AddPropToCard(card, ddCard.SpellSpeedRef, "SpellSpeedRef", spellSpeeds,  (c, v) => c.SpellSpeed = v);
-                AddPropToCard(card, ddCard.Set,           "Set",           sets,         (c, v) => c.Set = v);
-                AddPropToCard(card, ddCard.RarityRef,     "RarityRef",     rarities,     (c, v) => c.Rarity = v);
+                AddPropToCard(card, ddCard.Set,           "Set",           sets,         (c, v) => c.Set        = v);
+                AddPropToCard(card, ddCard.RarityRef,     "RarityRef",     rarities,     (c, v) => c.Rarity     = v);
 
+                AddPropListToCard(card, ddCard.RegionRefs,  "RegionRef",  regions,    (c, vs) => c.Regions  = vs);
                 AddPropListToCard(card, ddCard.Subtypes,    "Subtype",    subtypeDic, (c, vs) => c.Subtypes = vs);
                 AddPropListToCard(card, ddCard.KeywordRefs, "KeywordRef", keywords,   (c, vs) => c.Keywords = vs);
 
-                card.Cost = ddCard.Cost;
-                card.Attack = ddCard.Attack;
-                card.Health = ddCard.Health;
-                card.Collectible = ddCard.Collectible;
-                card.Description = ddCard.Description;
-                card.DescriptionRaw = ddCard.DescriptionRaw;
-                card.LevelupDescription = ddCard.LevelupDescription;
+                card.Cost                  = ddCard.Cost;
+                card.Attack                = ddCard.Attack;
+                card.Health                = ddCard.Health;
+                card.Collectible           = ddCard.Collectible;
+                card.Description           = ddCard.Description;
+                card.DescriptionRaw        = ddCard.DescriptionRaw;
+                card.LevelupDescription    = ddCard.LevelupDescription;
                 card.LevelupDescriptionRaw = ddCard.LevelupDescriptionRaw;
-                card.FlavorText = ddCard.FlavorText;
-                card.ArtistName = ddCard.ArtistName;
+                card.FlavorText            = ddCard.FlavorText;
+                card.ArtistName            = ddCard.ArtistName;
 
                 if (ddCard.Assets != null && ddCard.Assets.Length > 0)
                 {
@@ -298,16 +299,16 @@ namespace Bjerg
 
             return new Catalog(Locale, Version)
             {
-                VocabTerms = vocabTerms,
-                Keywords = keywords,
-                Regions = regions,
+                VocabTerms  = vocabTerms,
+                Keywords    = keywords,
+                Regions     = regions,
                 SpellSpeeds = spellSpeeds,
-                Rarities = rarities,
-                Sets = sets,
-                Supertypes = supertypes,
-                Types = types,
-                Subtypes = subtypes,
-                Cards = cards,
+                Rarities    = rarities,
+                Sets        = sets,
+                Supertypes  = supertypes,
+                Types       = types,
+                Subtypes    = subtypes,
+                Cards       = cards,
             };
         }
 

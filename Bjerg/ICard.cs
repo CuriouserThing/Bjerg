@@ -16,6 +16,8 @@ namespace Bjerg
 
         LorFaction? Region { get; }
 
+        IReadOnlyList<LorFaction>? Regions { get; }
+
         LorSupertype? Supertype { get; }
 
         LorType? Type { get; }
@@ -55,5 +57,23 @@ namespace Bjerg
         Uri? FullArtPath { get; }
 
         IReadOnlyList<ICard> AssociatedCards { get; }
+
+        IReadOnlyList<LorFaction> GetAllRegions()
+        {
+            IReadOnlyList<LorFaction>? regions = Regions;
+            LorFaction? region = Region;
+            if (regions is not null && regions.Count > 0)
+            {
+                return regions;
+            }
+            else if (region is not null)
+            {
+                return new[] { region };
+            }
+            else
+            {
+                return Array.Empty<LorFaction>();
+            }
+        }
     }
 }

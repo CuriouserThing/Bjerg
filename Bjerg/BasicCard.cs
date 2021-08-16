@@ -8,10 +8,10 @@ namespace Bjerg
     {
         public BasicCard(CardCode code, Locale locale, Version version, string? name)
         {
-            Code = code;
-            Locale = locale;
+            Code    = code;
+            Locale  = locale;
             Version = version;
-            Name = name;
+            Name    = name;
         }
 
         public CardCode Code { get; }
@@ -23,6 +23,8 @@ namespace Bjerg
         public string? Name { get; }
 
         public LorFaction? Region { get; internal set; }
+
+        public IReadOnlyList<LorFaction>? Regions { get; internal set; }
 
         public LorSupertype? Supertype { get; internal set; }
 

@@ -15,6 +15,10 @@ namespace Bjerg.DataDragon
 
         public string? RegionRef { get; set; }
 
+        public string[]? Regions { get; set; }
+
+        public string[]? RegionRefs { get; set; }
+
         public int Attack { get; set; }
 
         public int Cost { get; set; }

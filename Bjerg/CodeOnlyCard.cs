@@ -8,11 +8,11 @@ namespace Bjerg
     {
         public CodeOnlyCard(CardCode code, Locale locale, Version version, LorFaction? region = null, LorSet? set = null)
         {
-            Code = code;
-            Locale = locale;
+            Code    = code;
+            Locale  = locale;
             Version = version;
-            Region = region;
-            Set = set;
+            Region  = region;
+            Set     = set;
         }
 
         public CardCode Code { get; }
@@ -26,6 +26,7 @@ namespace Bjerg
         public LorSet? Set { get; }
 
         public string? Name => default;
+        public IReadOnlyList<LorFaction>? Regions => default;
         public LorSupertype? Supertype => default;
         public LorType? Type => default;
         public IReadOnlyList<LorSubtype> Subtypes { get; } = Array.Empty<LorSubtype>();
