@@ -6,6 +6,8 @@ namespace Bjerg
 {
     internal class BasicCard : ICard
     {
+        private LorFaction? _region;
+
         public BasicCard(CardCode code, Locale locale, Version version, string? name)
         {
             Code    = code;
@@ -22,7 +24,21 @@ namespace Bjerg
 
         public string? Name { get; }
 
-        public LorFaction? Region { get; internal set; }
+        public LorFaction? Region
+        {
+            get
+            {
+                if (Regions is not null && Regions.Count > 0)
+                {
+                    return Regions[0];
+                }
+                else
+                {
+                    return _region;
+                }
+            }
+            internal set => _region = value;
+        }
 
         public IReadOnlyList<LorFaction>? Regions { get; internal set; }
 
