@@ -42,6 +42,7 @@ namespace Bjerg
             ["Shurima"] = 7,
             ["Targon"] = 9,
             ["BandleCity"] = 10,
+            ["Runeterra"] = 12,
         };
 
         public async Task<Catalog> GetCatalog(Locale locale, Version version)
