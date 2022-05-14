@@ -70,10 +70,19 @@ namespace Bjerg
                 }
             }
 
+            // Shim to add the Runeterra region during spoiler season.
+            globals.Regions = globals.Regions!.Append(new DdRegion
+            {
+                Name = "Runeterra", // en-US only
+                NameRef = "Runeterra",
+                Abbreviation = "RU",
+                IconAbsolutePath = "https://dd.b.pvp.net/3_8_0/core/en_us/img/regions/icon-all.png", // en-US only
+            }).ToArray();
+
             // Shim to add set 6 during spoiler season.
             globals.Sets = globals.Sets.Append(new DdSet
             {
-                IconAbsolutePath = "http://dd.b.pvp.net/3_8_0/core/en_us/img/sets/set6.png", // en-US only
+                IconAbsolutePath = "https://dd.b.pvp.net/3_8_0/core/en_us/img/sets/set6.png", // en-US only
                 Name    = "Worldwalker", // en-US only
                 NameRef = "Set6",
             }).ToArray();
